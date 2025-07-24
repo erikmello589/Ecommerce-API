@@ -1,0 +1,65 @@
+package com.erikm.ecommerce.service;
+
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
+
+import com.erikm.ecommerce.dto.CategoryDTO;
+import com.erikm.ecommerce.model.Category;
+import com.erikm.ecommerce.repository.CategoryRepository;
+
+@Service
+public class CategoryService 
+{
+    private final CategoryRepository categoryRepository;
+
+    public CategoryService(CategoryRepository categoryRepository) 
+    {
+        this.categoryRepository = categoryRepository;    
+    }
+
+    public Category createNewCategory(CategoryDTO categoryDTO) 
+    {
+        Optional<Category> categoryFromDB = categoryRepository.findByName(categoryDTO.name());
+
+        if (categoryFromDB.isPresent()) 
+        {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Categoria já existente com o nome: " + categoryDTO.name());
+        }
+
+        Category newCategory = new Category();
+        newCategory.setName(categoryDTO.name());
+        newCategory.setDescription(categoryDTO.description());
+        newCategory.setIsActive(categoryDTO.isActive());
+
+        return categoryRepository.save(newCategory);
+    }
+
+    public List<Category> listAllCategories() 
+    {
+        return categoryRepository.findAll();
+        //TODO Regra de negócios para Auth: Usuário Admin receberá todas as informações (incluindo timestamps) e usuário deslogado apenas receberá DTOs
+
+    }
+
+    public Category findCategoryById(Long categoryId) 
+    {
+        return categoryRepository.findById(categoryId)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Categoria não encontrada."));
+    }
+
+    public Category editCategory(Long categoryId, CategoryDTO categoryDTO) 
+    {
+        Category categoryFromDB = categoryRepository.findById(categoryId)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Categoria não encontrada"));
+
+        categoryFromDB.setName(categoryDTO.name());
+        categoryFromDB.setDescription(categoryDTO.description());
+        categoryFromDB.setIsActive(categoryDTO.isActive());
+            
+        return categoryRepository.save(categoryFromDB);
+    }
+}

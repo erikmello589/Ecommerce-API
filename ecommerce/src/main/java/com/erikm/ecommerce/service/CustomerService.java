@@ -1,0 +1,79 @@
+package com.erikm.ecommerce.service;
+
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
+
+import com.erikm.ecommerce.dto.CustomerDTO;
+import com.erikm.ecommerce.model.Customer;
+import com.erikm.ecommerce.repository.CustomerRepository;
+
+@Service
+public class CustomerService 
+{
+
+    private final CustomerRepository customerRepository;
+
+    public CustomerService(CustomerRepository customerRepository) 
+    {
+        this.customerRepository = customerRepository;    
+    }
+
+    public Customer createNewCustomer(CustomerDTO customerDTO) 
+    {
+        Optional<Customer> customerFromDB = customerRepository.findByDocument(customerDTO.document());
+
+        if (customerFromDB.isPresent()) 
+        {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Cliente já existente com o documento informado.");
+        }
+
+        Customer newCustomer = new Customer();
+        newCustomer.setFirstName(customerDTO.firstName());
+        newCustomer.setLastName(customerDTO.lastName());
+        newCustomer.setEmail(customerDTO.email());
+        newCustomer.setPhone(customerDTO.phone());
+        newCustomer.setDocument(customerDTO.document());
+        newCustomer.setIsActive(customerDTO.isActive());
+
+        return customerRepository.save(newCustomer);
+    }
+
+    public List<Customer> listAllCostumers() 
+    {
+        return customerRepository.findAll();
+        //TODO Regra de negócios para Auth: Usuário Admin receberá todas as informações (incluindo timestamps) e usuário deslogado apenas receberá DTOs
+
+    }
+
+    public Customer findCustomerById(Long customerId) 
+    {
+        return customerRepository.findById(customerId)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente não encontrado."));
+    }
+
+    public Customer findCustomerByEmail(String email) 
+    {
+        return customerRepository.findByEmail(email)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente não encontrado."));
+    }
+
+    public Customer editCustomer(Long customerId, CustomerDTO customerDTO) 
+    {
+        Customer customerFromDB = customerRepository.findById(customerId)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Clinete não encontrado."));
+
+        customerFromDB.setFirstName(customerDTO.firstName());
+        customerFromDB.setLastName(customerDTO.lastName());
+        customerFromDB.setEmail(customerDTO.email());
+        customerFromDB.setPhone(customerDTO.phone());
+        customerFromDB.setDocument(customerDTO.document());
+        customerFromDB.setIsActive(customerDTO.isActive());
+
+            
+        return customerRepository.save(customerFromDB);
+    }
+}
