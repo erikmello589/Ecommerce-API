@@ -2,6 +2,7 @@ package com.erikm.ecommerce.service;
 
 import java.util.Optional;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -16,10 +17,11 @@ import com.erikm.ecommerce.repository.ProductRepository;
 public class ProductService 
 {
     private final ProductRepository productRepository;
+    private final ModelMapper modelMapper;
 
-    public ProductService(ProductRepository productRepository) 
-    {
+    public ProductService(ProductRepository productRepository, ModelMapper modelMapper) {
         this.productRepository = productRepository;
+        this.modelMapper = modelMapper;
     }
 
     public Product createNewProduct(ProductDTO productDTO) 
@@ -75,5 +77,15 @@ public class ProductService
         productFromDB.setStockQuantity(stockQuantity);
         //TODO: Regra de negócio, estoque não pode ser negativo
         return productRepository.save(productFromDB);
+    }
+
+    public ProductDTO convertToDto(Product product) 
+    {
+        return modelMapper.map(product, ProductDTO.class);
+    }
+
+    public Product convertToEntity(ProductDTO productDTO) 
+    {
+        return modelMapper.map(productDTO, Product.class);
     }
 }

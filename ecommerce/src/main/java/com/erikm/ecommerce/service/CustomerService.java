@@ -3,6 +3,7 @@ package com.erikm.ecommerce.service;
 import java.util.List;
 import java.util.Optional;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -16,10 +17,11 @@ public class CustomerService
 {
 
     private final CustomerRepository customerRepository;
+    private final ModelMapper modelMapper;
 
-    public CustomerService(CustomerRepository customerRepository) 
-    {
-        this.customerRepository = customerRepository;    
+    public CustomerService(CustomerRepository customerRepository, ModelMapper modelMapper) {
+        this.customerRepository = customerRepository;
+        this.modelMapper = modelMapper;
     }
 
     public Customer createNewCustomer(CustomerDTO customerDTO) 
@@ -75,5 +77,15 @@ public class CustomerService
 
             
         return customerRepository.save(customerFromDB);
+    }
+
+    public CustomerDTO convertToDto(Customer customer) 
+    {
+        return modelMapper.map(customer, CustomerDTO.class);
+    }
+
+    public Customer convertToEntity(CustomerDTO customerDTO) 
+    {
+        return modelMapper.map(customerDTO, Customer.class);
     }
 }

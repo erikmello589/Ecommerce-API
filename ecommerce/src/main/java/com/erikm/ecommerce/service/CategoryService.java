@@ -11,14 +11,17 @@ import com.erikm.ecommerce.dto.CategoryDTO;
 import com.erikm.ecommerce.model.Category;
 import com.erikm.ecommerce.repository.CategoryRepository;
 
+import org.modelmapper.ModelMapper;
+
 @Service
 public class CategoryService 
 {
     private final CategoryRepository categoryRepository;
+    private final ModelMapper modelMapper;
 
-    public CategoryService(CategoryRepository categoryRepository) 
-    {
-        this.categoryRepository = categoryRepository;    
+    public CategoryService(CategoryRepository categoryRepository, ModelMapper modelMapper) {
+        this.categoryRepository = categoryRepository;
+        this.modelMapper = modelMapper;
     }
 
     public Category createNewCategory(CategoryDTO categoryDTO) 
@@ -62,4 +65,15 @@ public class CategoryService
             
         return categoryRepository.save(categoryFromDB);
     }
+
+    public CategoryDTO convertToDto(Category category) 
+    {
+        return modelMapper.map(category, CategoryDTO.class);
+    }
+
+    public Category convertToEntity(CategoryDTO categoryDTO) 
+    {
+        return modelMapper.map(categoryDTO, Category.class);
+    }
+
 }
