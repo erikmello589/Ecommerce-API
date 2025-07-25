@@ -13,6 +13,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.erikm.ecommerce.dto.ApiResponse;
 import com.erikm.ecommerce.dto.OrderDTO;
+import com.erikm.ecommerce.dto.PageResponse;
 import com.erikm.ecommerce.model.Order;
 import com.erikm.ecommerce.service.OrderService;
 
@@ -41,6 +42,14 @@ public class OrderController
         {
             return ResponseEntity.status(e.getStatusCode()).body(ApiResponse.error(e.getStatusCode().toString(), e.getTypeMessageCode(), e.getReason()));
         }
+    }
+
+    @GetMapping("/api/orders")
+    public ResponseEntity<PageResponse<Order>> getAllOrders(@ParameterObject Pageable pageable) 
+    {
+        Page<Order> call = orderService.listAllOrders(pageable);
+        PageResponse<Order> pageResponse = PageResponse.fromSpringPage(call);
+        return ResponseEntity.status(HttpStatus.OK).body(pageResponse);
     }
 
     @GetMapping("/api/orders/{id}")

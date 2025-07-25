@@ -1,9 +1,10 @@
 package com.erikm.ecommerce.service;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -49,10 +50,9 @@ public class CustomerService
         return customerRepository.save(newCustomer);
     }
 
-    public List<Customer> listAllCostumers() 
+    public Page<Customer> listAllCostumers(Pageable pageable) 
     {
-        return customerRepository.findAll();
-        //TODO Regra de negócios para Auth: Usuário Admin receberá todas as informações (incluindo timestamps) e usuário deslogado apenas receberá DTOs
+        return customerRepository.findAll(pageable);
 
     }
 

@@ -10,5 +10,5 @@ import com.erikm.ecommerce.model.Order;
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> 
 {
-    Page<Order> findByCustomerId(Long customerId, Pageable pageable);
+    Page<Order> findByCustomerCustomerId(Long customerId, Pageable pageable);
 }

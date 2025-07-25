@@ -103,9 +103,8 @@ public class OrderService {
         return orderRepository.save(newOrder);
     }
 
-    public List<Order> listAllOrders() {
-        return orderRepository.findAll();
-        // TODO Regra de negócios para Auth: Usuário Admin receberá todas as informações (incluindo timestamps) e usuário deslogado apenas receberá DTOs
+    public Page<Order> listAllOrders(Pageable pageable) {
+        return orderRepository.findAll(pageable);
     }
 
     public Order findOrderById(Long orderId) {
@@ -116,7 +115,7 @@ public class OrderService {
     public Page<Order> findOrdersByCustomerId(Long customerId, Pageable pageable) 
     {
         customerService.findCustomerById(customerId);
-        return orderRepository.findByCustomerId(customerId, pageable);
+        return orderRepository.findByCustomerCustomerId(customerId, pageable);
     }
 
     public OrderDTO convertToDto(Order order) {

@@ -1,6 +1,5 @@
 package com.erikm.ecommerce.service;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -11,7 +10,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.erikm.ecommerce.dto.CategoryDTO;
 import com.erikm.ecommerce.model.Category;
-import com.erikm.ecommerce.model.Product;
 import com.erikm.ecommerce.repository.CategoryRepository;
 
 import org.modelmapper.ModelMapper;
@@ -43,10 +41,9 @@ public class CategoryService
         return categoryRepository.save(newCategory);
     }
 
-    public List<Category> findAllCategories() 
+    public Page<Category> findAllCategories(Pageable pageable) 
     {
-        return categoryRepository.findAll();
-        //TODO Regra de negócios para Auth: Usuário Admin receberá todas as informações (incluindo timestamps) e usuário deslogado apenas receberá DTOs
+        return categoryRepository.findAll(pageable);
 
     }
 

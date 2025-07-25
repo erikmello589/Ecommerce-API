@@ -1,12 +1,10 @@
 package com.erikm.ecommerce.controller;
 
-import java.util.List;
-
-import org.springdoc.core.converters.models.PageableAsQueryParam;
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.erikm.ecommerce.dto.ApiResponse;
@@ -46,19 +44,13 @@ public class CategoryController
         }
     }
 
-    /*@GetMapping("/api/categories")
-    public ResponseEntity<ApiResponse<?>> getCategories() 
+    @GetMapping("/api/categories")
+    public ResponseEntity<PageResponse<Category>> getAllCustomers(@ParameterObject Pageable pageable) 
     {
-        try 
-        {
-            List<Category> call = categoryService.listAllCategories();
-            return ResponseEntity.status(HttpStatus.OK).body(PageResponse(AJUDA AQUI, "Categorias listadas com sucesso."));
-        } 
-        catch (ResponseStatusException e) 
-        {
-            return ResponseEntity.status(e.getStatusCode()).body(ApiResponse.error(e.getTitleMessageCode(), e.getTypeMessageCode(), e.getReason()));
-        }
-    }*/
+        Page<Category> call = categoryService.findAllCategories(pageable);
+        PageResponse<Category> pageResponse = PageResponse.fromSpringPage(call);
+        return ResponseEntity.status(HttpStatus.OK).body(pageResponse);
+    }
 
     @GetMapping("/api/categories/{id}")
     public ResponseEntity<ApiResponse<?>> getCategory(@PathVariable("id") Long categoryId)

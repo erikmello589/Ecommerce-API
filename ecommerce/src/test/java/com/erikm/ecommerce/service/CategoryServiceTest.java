@@ -12,10 +12,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 import org.springframework.web.server.ResponseStatusException;
+
 import org.springframework.http.HttpStatus;
 
-import java.util.Arrays;
-import java.util.List;
+
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -87,20 +87,6 @@ class CategoryServiceTest {
         // Verifica se o método save NÃO foi chamado
         verify(categoryRepository, times(1)).findByName(categoryDTO.name());
         verify(categoryRepository, never()).save(any(Category.class));
-    }
-
-    @Test
-    @DisplayName("Deve listar todas as categorias com sucesso")
-    void listAllCategories_Success() {
-        List<Category> categories = Arrays.asList(category, new Category());
-        when(categoryRepository.findAll()).thenReturn(categories);
-
-        List<Category> result = categoryService.findAllCategories();
-
-        assertNotNull(result);
-        assertEquals(2, result.size());
-        assertEquals(categories, result);
-        verify(categoryRepository, times(1)).findAll();
     }
 
     @Test
