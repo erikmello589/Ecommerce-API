@@ -7,9 +7,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.erikm.ecommerce.dto.ApiResponse;
 import com.erikm.ecommerce.dto.CategoryDTO;
-import com.erikm.ecommerce.dto.PageResponse;
+import com.erikm.ecommerce.dto.Responses.ApiResponse;
+import com.erikm.ecommerce.dto.Responses.PageResponse;
 import com.erikm.ecommerce.model.Category;
 import com.erikm.ecommerce.service.CategoryService;
 

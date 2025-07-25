@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.erikm.ecommerce.dto.ApiResponse;
 import com.erikm.ecommerce.dto.OrderDTO;
-import com.erikm.ecommerce.dto.PageResponse;
+import com.erikm.ecommerce.dto.Responses.ApiResponse;
+import com.erikm.ecommerce.dto.Responses.PageResponse;
 import com.erikm.ecommerce.model.Order;
 import com.erikm.ecommerce.service.OrderService;
 

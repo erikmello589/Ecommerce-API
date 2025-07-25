@@ -16,9 +16,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.erikm.ecommerce.dto.ApiResponse;
-import com.erikm.ecommerce.dto.PageResponse;
 import com.erikm.ecommerce.dto.ProductDTO;
+import com.erikm.ecommerce.dto.Responses.ApiResponse;
+import com.erikm.ecommerce.dto.Responses.PageResponse;
 import com.erikm.ecommerce.model.Product;
 import com.erikm.ecommerce.service.ProductService;
 

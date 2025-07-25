@@ -1,4 +1,4 @@
-package com.erikm.ecommerce.dto;
+package com.erikm.ecommerce.dto.Responses;
 
 import java.util.List;
 

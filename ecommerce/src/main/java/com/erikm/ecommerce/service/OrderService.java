@@ -107,6 +107,27 @@ public class OrderService {
         return orderRepository.findAll(pageable);
     }
 
+    @Transactional
+    public OrderStatus editStatusOrder(Long orderId, String statusRequest) 
+    {
+        Order order = orderRepository.findById(orderId)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Pedido não encontrado."));
+
+        OrderStatus newStatus;
+        try 
+        {
+            newStatus = OrderStatus.valueOf(statusRequest.toUpperCase());
+        } 
+        catch (IllegalArgumentException e) 
+        {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "O status fornecido é inválido. Status permitidos: " + java.util.Arrays.toString(OrderStatus.values()));
+        }
+
+        order.setStatus(newStatus);
+        orderRepository.save(order);
+        return newStatus;
+    }
+
     public Order findOrderById(Long orderId) {
         return orderRepository.findById(orderId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Pedido não encontrado."));
