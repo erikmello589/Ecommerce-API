@@ -1,7 +1,10 @@
 package com.erikm.ecommerce.controller;
 
-import java.util.UUID;
+import java.math.BigDecimal;
 
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.erikm.ecommerce.dto.ApiResponse;
+import com.erikm.ecommerce.dto.PageResponse;
 import com.erikm.ecommerce.dto.ProductDTO;
 import com.erikm.ecommerce.model.Product;
 import com.erikm.ecommerce.service.ProductService;
@@ -46,6 +50,35 @@ public class ProductController
             return ResponseEntity.status(e.getStatusCode()).body(ApiResponse.error(e.getStatusCode().toString(), e.getTypeMessageCode(), e.getReason()));
         }
     }
+
+    @GetMapping("/api/products")
+    public ResponseEntity<PageResponse<Product>> getProducts(
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) Long categoryId,
+            @RequestParam(required = false) BigDecimal minPrice,
+            @RequestParam(required = false) BigDecimal maxPrice,
+            @ParameterObject Pageable pageable) {
+
+        Page<Product> products;
+
+        if (name != null && categoryId != null) {
+            products = productService.findProductsByNameAndCategory(name, categoryId, pageable);
+        } else if (name != null) {
+            products = productService.findProductsByName(name, pageable);
+        } else if (categoryId != null) {
+            products = productService.findProductsByCategory(categoryId, pageable);
+        } else if (minPrice != null && maxPrice != null) {
+            products = productService.findProductsByPriceRange(minPrice, maxPrice, pageable);
+        } else {
+            products = productService.findAllProducts(pageable);
+        }
+
+        // Convert Spring's Page to your custom PageResponse
+        PageResponse<Product> pageResponse = PageResponse.fromSpringPage(products);
+
+        return ResponseEntity.status(HttpStatus.OK).body(pageResponse);
+    }
+    
 
     @GetMapping("/api/products/{id}")
     public ResponseEntity<ApiResponse<?>> getProductById(@PathVariable("id") Long productId)

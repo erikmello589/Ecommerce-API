@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,10 +44,10 @@ public class OrderService {
     @Transactional
     public Order createNewOrder(OrderDTO orderDTO) 
     {
-        // 1. Busca o cliente. Se não encontrar, findCustomerByEmail já lança NOT_FOUND.
+        
         Customer customer = customerService.findCustomerByEmail(orderDTO.customerEmail());
 
-        // 2. Valida se há itens no pedido.
+        
         if (orderDTO.orderItens() == null || orderDTO.orderItens().isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "O pedido deve conter pelo menos um item.");
         }
@@ -61,8 +63,6 @@ public class OrderService {
         BigDecimal calculatedTotalAmount = BigDecimal.ZERO;
         boolean hasInsufficientStock = false; 
 
-        // 4. Itera sobre os itens do DTO para criar os OrderItems e verificar o estoque.
-        // Esta é a ÚNICA iteração necessária.
         for (OrderItemDTO itemDTO : orderDTO.orderItens())
         {
             Product product = productService.findProductBySku(itemDTO.sku());
@@ -111,6 +111,12 @@ public class OrderService {
     public Order findOrderById(Long orderId) {
         return orderRepository.findById(orderId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Pedido não encontrado."));
+    }
+
+    public Page<Order> findOrdersByCustomerId(Long customerId, Pageable pageable) 
+    {
+        customerService.findCustomerById(customerId);
+        return orderRepository.findByCustomerId(customerId, pageable);
     }
 
     public OrderDTO convertToDto(Order order) {

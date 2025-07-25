@@ -1,8 +1,8 @@
 package com.erikm.ecommerce.controller;
 
 import java.util.List;
-import java.util.UUID;
 
+import org.springdoc.core.converters.models.PageableAsQueryParam;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +12,6 @@ import org.springframework.web.server.ResponseStatusException;
 import com.erikm.ecommerce.dto.ApiResponse;
 import com.erikm.ecommerce.dto.CategoryDTO;
 import com.erikm.ecommerce.dto.PageResponse;
-import com.erikm.ecommerce.dto.RequestResponseDTO;
 import com.erikm.ecommerce.model.Category;
 import com.erikm.ecommerce.service.CategoryService;
 
@@ -53,8 +52,7 @@ public class CategoryController
         try 
         {
             List<Category> call = categoryService.listAllCategories();
-            PageResponse<Category> pageResponse = new PageResponse<>(content, page, size, totalElements, totalPages, first, last);
-            return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(pageResponse, "Categorias listadas com sucesso."));
+            return ResponseEntity.status(HttpStatus.OK).body(PageResponse(AJUDA AQUI, "Categorias listadas com sucesso."));
         } 
         catch (ResponseStatusException e) 
         {

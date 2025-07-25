@@ -1,5 +1,6 @@
 package com.erikm.ecommerce.service;
 
+import java.math.BigDecimal;
 import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
@@ -46,7 +47,6 @@ public class ProductService
         newProduct.setStockQuantity(productDTO.stockQuantity());
         newProduct.setCategory(categoryFromDB);
         newProduct.setSku(productDTO.sku());
-        newProduct.setIsActive(productDTO.isActive());
 
         return productRepository.save(newProduct);
     }
@@ -63,6 +63,11 @@ public class ProductService
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Produto de SKU Nº:" + productSku + "não encontrado no sistema."));
     }
 
+    public Page<Product> findAllProducts(Pageable pageable) 
+    {
+        return productRepository.findAll(pageable);
+    }
+
     public Page<Product> findProductsByCategory(String categoryName, Pageable pageable) 
     {
         return productRepository.findByCategoryNameContainingIgnoreCase(categoryName, pageable);
@@ -74,13 +79,13 @@ public class ProductService
         Product productFromDB = productRepository.findById(productId)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Produto não encontrado."));
 
+        Category categoryFromDB = categoryService.findCategoryByName(productDTO.category());
+
         productFromDB.setName(productDTO.name());
         productFromDB.setDescription(productDTO.description());
         productFromDB.setPrice(productDTO.price());
         productFromDB.setStockQuantity(productDTO.stockQuantity());
-        //productFromDB.setCategory(productDTO.categoryDTO()); 
-        //TODO: tratar edição de categoria (pode se criar uma nova OU adicionar uma já existente no banco)
-        productFromDB.setIsActive(productDTO.isActive());
+        productFromDB.setCategory(categoryFromDB);
             
         return productRepository.save(productFromDB);
     }
@@ -97,6 +102,30 @@ public class ProductService
 
         productFromDB.setStockQuantity(stockQuantity);
         return productRepository.save(productFromDB);
+    }
+
+    // Método para buscar produtos por nome com paginação e ordenação
+    public Page<Product> findProductsByName(String name, Pageable pageable) 
+    {
+        return productRepository.findByNameContainingIgnoreCase(name, pageable);
+    }
+
+    // Método para buscar produtos por categoria com paginação e ordenação
+    public Page<Product> findProductsByCategory(Long categoryId, Pageable pageable) 
+    {
+        return productRepository.findByCategoryCategoryId(categoryId, pageable);
+    }
+
+    // Método para buscar produtos por faixa de preço com paginação e ordenação
+    public Page<Product> findProductsByPriceRange(BigDecimal minPrice, BigDecimal maxPrice, Pageable pageable) 
+    {
+        return productRepository.findByPriceBetween(minPrice, maxPrice, pageable);
+    }
+
+    // Método para buscar produtos com múltiplos filtros (ex: nome e categoria)
+    public Page<Product> findProductsByNameAndCategory(String name, Long categoryId, Pageable pageable) 
+    {
+        return productRepository.findByNameContainingIgnoreCaseAndCategoryCategoryId(name, categoryId, pageable);
     }
 
     public ProductDTO convertToDto(Product product) 

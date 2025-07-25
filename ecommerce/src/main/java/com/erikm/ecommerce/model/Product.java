@@ -65,7 +65,7 @@ public class Product extends Timestamps
 
     public Product() 
     {
-        super(); 
+        super();
     }
 
     public Long getProductId() {

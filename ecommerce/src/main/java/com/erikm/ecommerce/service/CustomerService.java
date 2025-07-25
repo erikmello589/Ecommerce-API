@@ -45,7 +45,6 @@ public class CustomerService
         newCustomer.setEmail(customerDTO.email());
         newCustomer.setPhone(customerDTO.phone());
         newCustomer.setDocument(customerDTO.document());
-        newCustomer.setIsActive(customerDTO.isActive());
 
         return customerRepository.save(newCustomer);
     }
@@ -79,7 +78,6 @@ public class CustomerService
         customerFromDB.setEmail(customerDTO.email());
         customerFromDB.setPhone(customerDTO.phone());
         customerFromDB.setDocument(customerDTO.document());
-        customerFromDB.setIsActive(customerDTO.isActive());
 
             
         return customerRepository.save(customerFromDB);

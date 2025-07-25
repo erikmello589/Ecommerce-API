@@ -19,6 +19,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class) 
@@ -44,7 +46,7 @@ class CategoryServiceTest {
         category.setDescription("Categoria de eletrônicos em geral");
         category.setIsActive(true);
 
-        categoryDTO = new CategoryDTO("Eletrônicos", "Categoria de eletrônicos em geral", true);
+        categoryDTO = new CategoryDTO("Eletrônicos", "Categoria de eletrônicos em geral");
     }
 
     @Test
@@ -93,7 +95,7 @@ class CategoryServiceTest {
         List<Category> categories = Arrays.asList(category, new Category());
         when(categoryRepository.findAll()).thenReturn(categories);
 
-        List<Category> result = categoryService.listAllCategories();
+        List<Category> result = categoryService.findAllCategories();
 
         assertNotNull(result);
         assertEquals(2, result.size());
@@ -130,7 +132,7 @@ class CategoryServiceTest {
     @Test
     @DisplayName("Deve editar uma categoria existente com sucesso")
     void editCategory_Success() {
-        CategoryDTO updatedCategoryDTO = new CategoryDTO("Periféricos", "Teclados, mouses, etc.", false);
+        CategoryDTO updatedCategoryDTO = new CategoryDTO("Periféricos", "Teclados, mouses, etc.");
         Category existingCategory = new Category();
         existingCategory.setCategoryId(1L);
         existingCategory.setName("Eletrônicos");
@@ -145,7 +147,6 @@ class CategoryServiceTest {
         assertNotNull(result);
         assertEquals(updatedCategoryDTO.name(), result.getName());
         assertEquals(updatedCategoryDTO.description(), result.getDescription());
-        assertEquals(updatedCategoryDTO.isActive(), result.getIsActive());
 
         verify(categoryRepository, times(1)).findById(1L);
         verify(categoryRepository, times(1)).save(existingCategory);
@@ -154,7 +155,7 @@ class CategoryServiceTest {
     @Test
     @DisplayName("Deve lançar exceção NOT_FOUND ao tentar editar categoria inexistente")
     void editCategory_NotFound() {
-        CategoryDTO updatedCategoryDTO = new CategoryDTO("Periféricos", "Teclados, mouses, etc.", false);
+        CategoryDTO updatedCategoryDTO = new CategoryDTO("Periféricos", "Teclados, mouses, etc.");
         when(categoryRepository.findById(anyLong())).thenReturn(Optional.empty());
 
         ResponseStatusException exception = assertThrows(ResponseStatusException.class, () ->
@@ -170,7 +171,7 @@ class CategoryServiceTest {
     @Test
     @DisplayName("Deve converter Category para CategoryDTO com sucesso")
     void convertToDto_Success() {
-        CategoryDTO expectedDto = new CategoryDTO("Eletrônicos", "Categoria de eletrônicos em geral", true);
+        CategoryDTO expectedDto = new CategoryDTO("Eletrônicos", "Categoria de eletrônicos em geral");
         when(modelMapper.map(category, CategoryDTO.class)).thenReturn(expectedDto);
 
         CategoryDTO result = categoryService.convertToDto(category);
