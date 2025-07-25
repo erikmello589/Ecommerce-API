@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,7 +21,6 @@ import com.erikm.ecommerce.service.CustomerService;
 
 import org.springframework.web.bind.annotation.RequestBody;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 
 @RestController
 @Tag(name = "Clientes", description = "Endpoints para gerenciamento de Clientes e suas informações.")
@@ -34,7 +34,7 @@ public class CustomerController
     }
 
     @PostMapping("/api/customers")
-    public ResponseEntity<ApiResponse<?>> newCustomer(@Valid @RequestBody CustomerDTO customerDTO) 
+    public ResponseEntity<ApiResponse<?>> newCustomer(@RequestBody CustomerDTO customerDTO) 
     {
         try 
         {
@@ -64,7 +64,7 @@ public class CustomerController
             return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(call, "Cliente encontrado com sucesso."));
         } 
         catch (ResponseStatusException e) {
-            return ResponseEntity.status(e.getStatusCode()).body(ApiResponse.error(e.getTitleMessageCode(), e.getTypeMessageCode(), e.getReason()));
+            return ResponseEntity.status(e.getStatusCode()).body(ApiResponse.error(e.getStatusCode().toString(), e.getTypeMessageCode(), e.getReason()));
         }
     }
 
@@ -77,20 +77,33 @@ public class CustomerController
             return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(call, "Cliente encontrado com sucesso."));
         } 
         catch (ResponseStatusException e) {
-            return ResponseEntity.status(e.getStatusCode()).body(ApiResponse.error(e.getTitleMessageCode(), e.getTypeMessageCode(), e.getReason()));
+            return ResponseEntity.status(e.getStatusCode()).body(ApiResponse.error(e.getStatusCode().toString(), e.getTypeMessageCode(), e.getReason()));
         }
     }
 
     @PutMapping("/api/customers/{id}")
-    public ResponseEntity<ApiResponse<?>> editCustomer(@PathVariable("id") Long customerId, @Valid @RequestBody CustomerDTO customerDTO)
+    public ResponseEntity<ApiResponse<?>> editCustomer(@PathVariable("id") Long customerId, @RequestBody CustomerDTO customerDTO)
     {
         try 
         {
             Customer call = customerService.editCustomer(customerId, customerDTO);
-            return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(call, "Categoria editada com sucesso."));
+            return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(call, "Cliente editado com sucesso."));
         } 
         catch (ResponseStatusException e) {
-            return ResponseEntity.status(e.getStatusCode()).body(ApiResponse.error(e.getTitleMessageCode(), e.getTypeMessageCode(), e.getReason()));
+            return ResponseEntity.status(e.getStatusCode()).body(ApiResponse.error(e.getStatusCode().toString(), e.getTypeMessageCode(), e.getReason()));
+        }
+    }
+
+    @DeleteMapping("/api/customers/{id}")
+    public ResponseEntity<ApiResponse<?>> deleteCustomer(@PathVariable("id") Long customerId)
+    {
+        try 
+        {
+            Customer call = customerService.deleteCustomer(customerId);
+            return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(call, "Cliente deletado com sucesso."));
+        } 
+        catch (ResponseStatusException e) {
+            return ResponseEntity.status(e.getStatusCode()).body(ApiResponse.error(e.getStatusCode().toString(), e.getTypeMessageCode(), e.getReason()));
         }
     }
 }

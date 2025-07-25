@@ -23,8 +23,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
+
 
 @RestController
 @Tag(name = "Pedido", description = "Endpoints para gerenciamento de Pedidos e suas informações.")
@@ -73,21 +72,15 @@ public class OrderController
     }
 
     @GetMapping("/api/orders/customer/{customerId}")
-    public ResponseEntity<ApiResponse<?>> getOrdersbyCustomerId(@PathVariable("customerId") Long customerId, @ParameterObject Pageable pageable)
+    public ResponseEntity<PageResponse<Order>> getOrdersbyCustomerId(@PathVariable("customerId") Long customerId, @ParameterObject Pageable pageable)
     {
-        try 
-        {
-            Page<Order> call = orderService.findOrdersByCustomerId(customerId, pageable);
-            return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(call, "Pedido Listado com sucesso."));
-        } 
-        catch (ResponseStatusException e) 
-        {
-            return ResponseEntity.status(e.getStatusCode()).body(ApiResponse.error(e.getStatusCode().toString(), e.getTypeMessageCode(), e.getReason()));
-        }
+        Page<Order> call = orderService.findOrdersByCustomerId(customerId, pageable);
+        PageResponse<Order> pageResponse = PageResponse.fromSpringPage(call);
+        return ResponseEntity.status(HttpStatus.OK).body(pageResponse);
     }
 
     @PatchMapping("/api/orders/{id}/status")
-    public ResponseEntity<ApiResponse<?>> editStock(@PathVariable("id") Long orderId, @Valid @NotBlank @RequestParam String orderStatus) 
+    public ResponseEntity<ApiResponse<?>> editStock(@PathVariable("id") Long orderId, @RequestParam String orderStatus) 
     {
         try 
         {
@@ -96,7 +89,7 @@ public class OrderController
         } 
         catch (ResponseStatusException e) 
         {
-            return ResponseEntity.status(e.getStatusCode()).body(ApiResponse.error(e.getTitleMessageCode(), e.getTypeMessageCode(), e.getReason()));
+            return ResponseEntity.status(e.getStatusCode()).body(ApiResponse.error(e.getStatusCode().toString(), e.getTypeMessageCode(), e.getReason()));
         }
     }
 }

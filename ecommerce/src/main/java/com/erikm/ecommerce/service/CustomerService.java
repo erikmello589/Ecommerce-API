@@ -27,8 +27,8 @@ public class CustomerService
 
     public Customer createNewCustomer(CustomerDTO customerDTO) 
     {
-        Optional<Customer> customerFromDB = customerRepository.findByDocument(customerDTO.document());
-        Optional<Customer> userFromEmailDB = customerRepository.findByEmail(customerDTO.email());
+        Optional<Customer> customerFromDB = customerRepository.findByDocumentAndIsActiveTrue(customerDTO.document());
+        Optional<Customer> userFromEmailDB = customerRepository.findByEmailAndIsActiveTrue(customerDTO.email());
 
         if (userFromEmailDB.isPresent()) 
         {
@@ -52,26 +52,26 @@ public class CustomerService
 
     public Page<Customer> listAllCostumers(Pageable pageable) 
     {
-        return customerRepository.findAll(pageable);
+        return customerRepository.findByIsActiveTrue(pageable);
 
     }
 
     public Customer findCustomerById(Long customerId) 
     {
-        return customerRepository.findById(customerId)
+        return customerRepository.findByCustomerIdAndIsActiveTrue(customerId)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente não encontrado."));
     }
 
     public Customer findCustomerByEmail(String email) 
     {
-        return customerRepository.findByEmail(email)
+        return customerRepository.findByEmailAndIsActiveTrue(email)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente não encontrado."));
     }
 
     public Customer editCustomer(Long customerId, CustomerDTO customerDTO) 
     {
-        Customer customerFromDB = customerRepository.findById(customerId)
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Clinete não encontrado."));
+        Customer customerFromDB = customerRepository.findByCustomerIdAndIsActiveTrue(customerId)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente não encontrado."));
 
         customerFromDB.setFirstName(customerDTO.firstName());
         customerFromDB.setLastName(customerDTO.lastName());
@@ -80,6 +80,15 @@ public class CustomerService
         customerFromDB.setDocument(customerDTO.document());
 
             
+        return customerRepository.save(customerFromDB);
+    }
+
+    public Customer deleteCustomer(Long customerId) 
+    {
+        Customer customerFromDB = customerRepository.findByCustomerIdAndIsActiveTrue(customerId)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente não encontrado."));
+
+        customerFromDB.setIsActive(false);
         return customerRepository.save(customerFromDB);
     }
 

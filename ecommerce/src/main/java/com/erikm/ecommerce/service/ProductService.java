@@ -31,7 +31,7 @@ public class ProductService
 
     public Product createNewProduct(ProductDTO productDTO) 
     {
-        Optional<Product> productFromDB = productRepository.findBySku(productDTO.sku());
+        Optional<Product> productFromDB = productRepository.findBySkuAndIsActiveTrue(productDTO.sku());
         
         if (productFromDB.isPresent()) 
         {
@@ -53,30 +53,30 @@ public class ProductService
 
     public Product findProductById(Long productId) 
     {
-        return productRepository.findById(productId)
+        return productRepository.findByProductIdAndIsActiveTrue(productId)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Produto não encontrado."));
     }
 
     public Product findProductBySku(String productSku) 
     {
-        return productRepository.findBySku(productSku)
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Produto de SKU Nº:" + productSku + "não encontrado no sistema."));
+        return productRepository.findBySkuAndIsActiveTrue(productSku)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Produto de SKU Nº: " + productSku + " não encontrado no sistema."));
     }
 
     public Page<Product> findAllProducts(Pageable pageable) 
     {
-        return productRepository.findAll(pageable);
+        return productRepository.findByIsActiveTrue(pageable);
     }
 
     public Page<Product> findProductsByCategory(String categoryName, Pageable pageable) 
     {
-        return productRepository.findByCategoryNameContainingIgnoreCase(categoryName, pageable);
+        return productRepository.findByCategoryNameContainingIgnoreCaseAndIsActiveTrue(categoryName, pageable);
     }
 
 
     public Product editProduct(Long productId, ProductDTO productDTO) 
     {
-        Product productFromDB = productRepository.findById(productId)
+        Product productFromDB = productRepository.findByProductIdAndIsActiveTrue(productId)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Produto não encontrado."));
 
         Category categoryFromDB = categoryService.findCategoryByName(productDTO.category());
@@ -92,40 +92,49 @@ public class ProductService
 
     public Product editStock(Long productId, Integer stockQuantity) 
     {
+        Product product =  productRepository.findByProductIdAndIsActiveTrue(productId)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Produto não encontrado."));
+
         if (stockQuantity < 0)
         {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Estoque não pode ser negativo.");
         }
 
-        Product productFromDB = productRepository.findById(productId)
+        product.setStockQuantity(stockQuantity);
+        return productRepository.save(product);
+    }
+
+    public Product deleteProduct(Long productId) 
+    {
+        Product productFromDB = productRepository.findByProductIdAndIsActiveTrue(productId)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Produto não encontrado."));
 
-        productFromDB.setStockQuantity(stockQuantity);
+        productFromDB.setIsActive(false);
         return productRepository.save(productFromDB);
     }
 
     
     public Page<Product> findProductsByName(String name, Pageable pageable) 
     {
-        return productRepository.findByNameContainingIgnoreCase(name, pageable);
+        return productRepository.findByNameContainingIgnoreCaseAndIsActiveTrue(name, pageable);
     }
 
     
     public Page<Product> findProductsByCategory(Long categoryId, Pageable pageable) 
     {
-        return productRepository.findByCategoryCategoryId(categoryId, pageable);
+        return productRepository.findByCategoryCategoryIdAndIsActiveTrue(categoryId, pageable);
     }
 
    
     public Page<Product> findProductsByPriceRange(BigDecimal minPrice, BigDecimal maxPrice, Pageable pageable) 
     {
-        return productRepository.findByPriceBetween(minPrice, maxPrice, pageable);
+        return productRepository.findByPriceBetweenAndIsActiveTrue(minPrice, maxPrice, pageable);
     }
 
     
     public Page<Product> findProductsByNameAndCategory(String name, Long categoryId, Pageable pageable) 
     {
-        return productRepository.findByNameContainingIgnoreCaseAndCategoryCategoryId(name, categoryId, pageable);
+        return productRepository.findByNameContainingIgnoreCaseAndCategoryCategoryIdAndIsActiveTrue(name, categoryId, pageable);
     }
 
     public ProductDTO convertToDto(Product product) 

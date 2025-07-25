@@ -12,16 +12,20 @@ import java.util.Optional;
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
-    Optional<Product> findBySku(String sku);
+    Page<Product> findByIsActiveTrue(Pageable pageable);
 
-    Page<Product> findByCategoryNameContainingIgnoreCase(String categoryName, Pageable pageable);
+    Optional<Product> findByProductIdAndIsActiveTrue(Long productId);
+
+    Optional<Product> findBySkuAndIsActiveTrue(String sku);
+
+    Page<Product> findByCategoryNameContainingIgnoreCaseAndIsActiveTrue(String categoryName, Pageable pageable);
 
     
-    Page<Product> findByNameContainingIgnoreCase(String name, Pageable pageable);
+    Page<Product> findByNameContainingIgnoreCaseAndIsActiveTrue(String name, Pageable pageable);
 
-    Page<Product> findByCategoryCategoryId(Long categoryId, Pageable pageable);
+    Page<Product> findByCategoryCategoryIdAndIsActiveTrue(Long categoryId, Pageable pageable);
 
-    Page<Product> findByPriceBetween(BigDecimal minPrice, BigDecimal maxPrice, Pageable pageable);
+    Page<Product> findByPriceBetweenAndIsActiveTrue(BigDecimal minPrice, BigDecimal maxPrice, Pageable pageable);
 
-    Page<Product> findByNameContainingIgnoreCaseAndCategoryCategoryId(String name, Long categoryId, Pageable pageable);
+    Page<Product> findByNameContainingIgnoreCaseAndCategoryCategoryIdAndIsActiveTrue(String name, Long categoryId, Pageable pageable);
 }

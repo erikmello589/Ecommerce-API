@@ -27,7 +27,7 @@ public class CategoryService
 
     public Category createNewCategory(CategoryDTO categoryDTO) 
     {
-        Optional<Category> categoryFromDB = categoryRepository.findByName(categoryDTO.name());
+        Optional<Category> categoryFromDB = categoryRepository.findByNameAndIsActiveTrue(categoryDTO.name());
 
         if (categoryFromDB.isPresent()) 
         {
@@ -43,30 +43,39 @@ public class CategoryService
 
     public Page<Category> findAllCategories(Pageable pageable) 
     {
-        return categoryRepository.findAll(pageable);
+        return categoryRepository.findByIsActiveTrue(pageable);
 
     }
 
     public Category findCategoryById(Long categoryId) 
     {
-        return categoryRepository.findById(categoryId)
+        return categoryRepository.findByCategoryIdAndIsActiveTrue(categoryId)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Categoria não encontrada."));
     }
 
     public Category findCategoryByName(String categoryName) 
     {
-        return categoryRepository.findByName(categoryName)
+        return categoryRepository.findByNameAndIsActiveTrue(categoryName)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Categoria não encontrada."));
     }
 
     public Category editCategory(Long categoryId, CategoryDTO categoryDTO) 
     {
-        Category categoryFromDB = categoryRepository.findById(categoryId)
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Categoria não encontrada"));
+        Category categoryFromDB = categoryRepository.findByCategoryIdAndIsActiveTrue(categoryId)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Categoria não encontrada."));
 
         categoryFromDB.setName(categoryDTO.name());
         categoryFromDB.setDescription(categoryDTO.description());
             
+        return categoryRepository.save(categoryFromDB);
+    }
+
+    public Category deleteCategory(Long categoryId) 
+    {
+        Category categoryFromDB = categoryRepository.findByCategoryIdAndIsActiveTrue(categoryId)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Categoria não encontrada."));
+
+        categoryFromDB.setIsActive(false);
         return categoryRepository.save(categoryFromDB);
     }
 

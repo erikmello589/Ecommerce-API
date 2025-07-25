@@ -15,7 +15,6 @@ import com.erikm.ecommerce.service.CategoryService;
 
 
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 
 import org.springframework.web.bind.annotation.*;
 
@@ -31,7 +30,7 @@ public class CategoryController
 
     
     @PostMapping("/api/categories")
-    public ResponseEntity<ApiResponse<?>> newCategory(@Valid @RequestBody CategoryDTO categoryDTO) 
+    public ResponseEntity<ApiResponse<?>> newCategory(@RequestBody CategoryDTO categoryDTO) 
     {
         try 
         {
@@ -61,12 +60,12 @@ public class CategoryController
             return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(call, "Categoria encontrada com sucesso."));
         } 
         catch (ResponseStatusException e) {
-            return ResponseEntity.status(e.getStatusCode()).body(ApiResponse.error(e.getTitleMessageCode(), e.getTypeMessageCode(), e.getReason()));
+            return ResponseEntity.status(e.getStatusCode()).body(ApiResponse.error(e.getStatusCode().toString(), e.getTypeMessageCode(), e.getReason()));
         }
     }
 
     @PutMapping("/api/categories/{id}")
-    public ResponseEntity<ApiResponse<?>> editCategory(@PathVariable("id") Long categoryId, @Valid @RequestBody CategoryDTO categoryDTO)
+    public ResponseEntity<ApiResponse<?>> editCategory(@PathVariable("id") Long categoryId, @RequestBody CategoryDTO categoryDTO)
     {
         try 
         {
@@ -74,7 +73,20 @@ public class CategoryController
             return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(call, "Categoria editada com sucesso."));
         } 
         catch (ResponseStatusException e) {
-            return ResponseEntity.status(e.getStatusCode()).body(ApiResponse.error(e.getTitleMessageCode(), e.getTypeMessageCode(), e.getReason()));
+            return ResponseEntity.status(e.getStatusCode()).body(ApiResponse.error(e.getStatusCode().toString(), e.getTypeMessageCode(), e.getReason()));
+        }
+    }
+
+    @DeleteMapping("/api/categories/{id}")
+    public ResponseEntity<ApiResponse<?>> deleteCategory(@PathVariable("id") Long categoryId)
+    {
+        try 
+        {
+            Category call = categoryService.deleteCategory(categoryId);
+            return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(call, "Categoria deletada com sucesso."));
+        } 
+        catch (ResponseStatusException e) {
+            return ResponseEntity.status(e.getStatusCode()).body(ApiResponse.error(e.getStatusCode().toString(), e.getTypeMessageCode(), e.getReason()));
         }
     }
 }

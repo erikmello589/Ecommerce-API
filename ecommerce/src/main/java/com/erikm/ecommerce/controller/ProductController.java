@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,8 +25,6 @@ import com.erikm.ecommerce.service.ProductService;
 
 import org.springframework.web.bind.annotation.RequestBody;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.Min;
 
 @RestController
 @Tag(name = "Produtos", description = "Endpoints para gerenciamento de Produtos e suas informações.")
@@ -89,7 +88,7 @@ public class ProductController
             return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(call, "Produto encontrado com sucesso."));
         } 
         catch (ResponseStatusException e) {
-            return ResponseEntity.status(e.getStatusCode()).body(ApiResponse.error(e.getTitleMessageCode(), e.getTypeMessageCode(), e.getReason()));
+            return ResponseEntity.status(e.getStatusCode()).body(ApiResponse.error(e.getStatusCode().toString(), e.getTypeMessageCode(), e.getReason()));
         }
     }
 
@@ -107,15 +106,28 @@ public class ProductController
         try 
         {
             Product call = productService.editProduct(productId, productDTO);
-            return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(call, "Categoria editada com sucesso."));
+            return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(call, "Produto editado com sucesso."));
         } 
         catch (ResponseStatusException e) {
-            return ResponseEntity.status(e.getStatusCode()).body(ApiResponse.error(e.getTitleMessageCode(), e.getTypeMessageCode(), e.getReason()));
+            return ResponseEntity.status(e.getStatusCode()).body(ApiResponse.error(e.getStatusCode().toString(), e.getTypeMessageCode(), e.getReason()));
+        }
+    }
+
+    @DeleteMapping("/api/products/{id}")
+    public ResponseEntity<ApiResponse<?>> deleteProduct(@PathVariable("id") Long productId)
+    {
+        try 
+        {
+            Product call = productService.deleteProduct(productId);
+            return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(call, "Produto deletado com sucesso."));
+        } 
+        catch (ResponseStatusException e) {
+            return ResponseEntity.status(e.getStatusCode()).body(ApiResponse.error(e.getStatusCode().toString(), e.getTypeMessageCode(), e.getReason()));
         }
     }
 
     @PatchMapping("/api/products/{id}/stock")
-    public ResponseEntity<ApiResponse<?>> editStock(@PathVariable("id") Long productId, @Valid @Min(value=0) @RequestParam Integer stockQuantity) 
+    public ResponseEntity<ApiResponse<?>> editStock(@PathVariable("id") Long productId, @RequestParam Integer stockQuantity) 
     {
         try 
         {
@@ -124,7 +136,7 @@ public class ProductController
         } 
         catch (ResponseStatusException e) 
         {
-            return ResponseEntity.status(e.getStatusCode()).body(ApiResponse.error(e.getTitleMessageCode(), e.getTypeMessageCode(), e.getReason()));
+            return ResponseEntity.status(e.getStatusCode()).body(ApiResponse.error(e.getStatusCode().toString(), e.getTypeMessageCode(), e.getReason()));
         }
     }
 }
