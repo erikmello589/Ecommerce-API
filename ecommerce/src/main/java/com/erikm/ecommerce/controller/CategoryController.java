@@ -1,15 +1,18 @@
 package com.erikm.ecommerce.controller;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.erikm.ecommerce.dto.ApiResponse;
 import com.erikm.ecommerce.dto.CategoryDTO;
 import com.erikm.ecommerce.dto.PageResponse;
+import com.erikm.ecommerce.dto.RequestResponseDTO;
 import com.erikm.ecommerce.model.Category;
 import com.erikm.ecommerce.service.CategoryService;
 
@@ -34,15 +37,15 @@ public class CategoryController
         try 
         {
             Category call = categoryService.createNewCategory(categoryDTO);
-            return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(call, "Produto criado com sucesso."));
+            return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(call, "Categoria criada com sucesso."));
         } 
         catch (ResponseStatusException e) 
         {
-            return ResponseEntity.status(e.getStatusCode()).body(ApiResponse.error(e.getTitleMessageCode(), e.getTypeMessageCode(), e.getReason()));
+            return ResponseEntity.status(e.getStatusCode()).body(ApiResponse.error(e.getStatusCode().toString(), e.getTypeMessageCode(), e.getReason()));
         }
     }
 
-    @GetMapping("/api/categories")
+    /*@GetMapping("/api/categories")
     public ResponseEntity<ApiResponse<?>> getCategories() 
     {
         try 
@@ -55,7 +58,7 @@ public class CategoryController
         {
             return ResponseEntity.status(e.getStatusCode()).body(ApiResponse.error(e.getTitleMessageCode(), e.getTypeMessageCode(), e.getReason()));
         }
-    }
+    }*/
 
     @GetMapping("/api/categories/{id}")
     public ResponseEntity<ApiResponse<?>> getCategory(@PathVariable("id") Long categoryId)
@@ -64,6 +67,19 @@ public class CategoryController
         {
             Category call = categoryService.findCategoryById(categoryId);
             return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(call, "Categoria encontrada com sucesso."));
+        } 
+        catch (ResponseStatusException e) {
+            return ResponseEntity.status(e.getStatusCode()).body(ApiResponse.error(e.getTitleMessageCode(), e.getTypeMessageCode(), e.getReason()));
+        }
+    }
+
+    @PutMapping("/api/categories/{id}")
+    public ResponseEntity<ApiResponse<?>> editCategory(@PathVariable("id") Long categoryId, @RequestBody CategoryDTO categoryDTO)
+    {
+        try 
+        {
+            Category call = categoryService.editCategory(categoryId, categoryDTO);
+            return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(call, "Categoria editada com sucesso."));
         } 
         catch (ResponseStatusException e) {
             return ResponseEntity.status(e.getStatusCode()).body(ApiResponse.error(e.getTitleMessageCode(), e.getTypeMessageCode(), e.getReason()));

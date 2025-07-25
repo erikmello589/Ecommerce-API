@@ -1,0 +1,83 @@
+package com.erikm.ecommerce.controller;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
+
+import com.erikm.ecommerce.dto.ApiResponse;
+import com.erikm.ecommerce.dto.CustomerDTO;
+import com.erikm.ecommerce.model.Customer;
+import com.erikm.ecommerce.service.CustomerService;
+
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
+@RestController
+@Tag(name = "Categoria", description = "Endpoints para gerenciamento de categorias e suas informações.")
+public class CustomerController 
+{
+
+    private final CustomerService customerService;
+
+    public CustomerController(CustomerService customerService) {
+        this.customerService = customerService;
+    }
+
+    @PostMapping("/api/customers")
+    public ResponseEntity<ApiResponse<?>> newCustomer(@RequestBody CustomerDTO customerDTO) 
+    {
+        try 
+        {
+            Customer call = customerService.createNewCustomer(customerDTO);
+            return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(call, "Cliente criado com sucesso."));
+        } 
+        catch (ResponseStatusException e) 
+        {
+            return ResponseEntity.status(e.getStatusCode()).body(ApiResponse.error(e.getStatusCode().toString(), e.getTypeMessageCode(), e.getReason()));
+        }
+    }
+
+    @GetMapping("/api/customers/{id}")
+    public ResponseEntity<ApiResponse<?>> getCustomerbyId(@PathVariable("id") Long customerId)
+    {
+        try 
+        {
+            Customer call = customerService.findCustomerById(customerId);
+            return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(call, "Cliente encontrado com sucesso."));
+        } 
+        catch (ResponseStatusException e) {
+            return ResponseEntity.status(e.getStatusCode()).body(ApiResponse.error(e.getTitleMessageCode(), e.getTypeMessageCode(), e.getReason()));
+        }
+    }
+
+    @GetMapping("/api/customers/email/{email}")
+    public ResponseEntity<ApiResponse<?>> getCategory(@PathVariable("email") String customerEmail)
+    {
+        try 
+        {
+            Customer call = customerService.findCustomerByEmail(customerEmail);
+            return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(call, "Cliente encontrado com sucesso."));
+        } 
+        catch (ResponseStatusException e) {
+            return ResponseEntity.status(e.getStatusCode()).body(ApiResponse.error(e.getTitleMessageCode(), e.getTypeMessageCode(), e.getReason()));
+        }
+    }
+
+    @PutMapping("/api/customers/{id}")
+    public ResponseEntity<ApiResponse<?>> editCustomer(@PathVariable("id") Long customerId, @RequestBody CustomerDTO customerDTO)
+    {
+        try 
+        {
+            Customer call = customerService.editCustomer(customerId, customerDTO);
+            return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(call, "Categoria editada com sucesso."));
+        } 
+        catch (ResponseStatusException e) {
+            return ResponseEntity.status(e.getStatusCode()).body(ApiResponse.error(e.getTitleMessageCode(), e.getTypeMessageCode(), e.getReason()));
+        }
+    }
+}
