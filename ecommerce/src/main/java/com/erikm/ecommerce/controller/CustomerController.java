@@ -16,6 +16,7 @@ import com.erikm.ecommerce.service.CustomerService;
 
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 
 @RestController
 @Tag(name = "Categoria", description = "Endpoints para gerenciamento de categorias e suas informações.")
@@ -29,7 +30,7 @@ public class CustomerController
     }
 
     @PostMapping("/api/customers")
-    public ResponseEntity<ApiResponse<?>> newCustomer(@RequestBody CustomerDTO customerDTO) 
+    public ResponseEntity<ApiResponse<?>> newCustomer(@Valid @RequestBody CustomerDTO customerDTO) 
     {
         try 
         {
@@ -69,7 +70,7 @@ public class CustomerController
     }
 
     @PutMapping("/api/customers/{id}")
-    public ResponseEntity<ApiResponse<?>> editCustomer(@PathVariable("id") Long customerId, @RequestBody CustomerDTO customerDTO)
+    public ResponseEntity<ApiResponse<?>> editCustomer(@PathVariable("id") Long customerId, @Valid @RequestBody CustomerDTO customerDTO)
     {
         try 
         {

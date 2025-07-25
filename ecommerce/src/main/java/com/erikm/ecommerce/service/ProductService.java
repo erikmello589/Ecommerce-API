@@ -30,7 +30,6 @@ public class ProductService
         
         if (productFromDB.isPresent()) 
         {
-            // Se o produto já existe no banco de dados, lançamos uma exceção de conflito.
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Produto já existente com o SKU: " + productDTO.sku());
         }
 
@@ -71,11 +70,15 @@ public class ProductService
 
     public Product editStock(Long productId, Integer stockQuantity) 
     {
+        if (stockQuantity < 0)
+        {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Estoque não pode ser negativo.");
+        }
+
         Product productFromDB = productRepository.findById(productId)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Produto não encontrado."));
 
         productFromDB.setStockQuantity(stockQuantity);
-        //TODO: Regra de negócio, estoque não pode ser negativo
         return productRepository.save(productFromDB);
     }
 

@@ -22,6 +22,8 @@ import com.erikm.ecommerce.service.ProductService;
 
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 
 @RestController
 @Tag(name = "Categoria", description = "Endpoints para gerenciamento de categorias e suas informações.")
@@ -74,7 +76,7 @@ public class ProductController
     }
 
     @PatchMapping("/api/products/{id}/stock")
-    public ResponseEntity<ApiResponse<?>> editStock(@PathVariable("id") Long productId, @RequestParam Integer stockQuantity) 
+    public ResponseEntity<ApiResponse<?>> editStock(@PathVariable("id") Long productId, @Valid @Min(value=0) @RequestParam Integer stockQuantity) 
     {
         try 
         {

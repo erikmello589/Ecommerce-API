@@ -27,6 +27,12 @@ public class CustomerService
     public Customer createNewCustomer(CustomerDTO customerDTO) 
     {
         Optional<Customer> customerFromDB = customerRepository.findByDocument(customerDTO.document());
+        Optional<Customer> userFromEmailDB = customerRepository.findByEmail(customerDTO.email());
+
+        if (userFromEmailDB.isPresent()) 
+        {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Cliente já existente com o Email informado.");
+        }
 
         if (customerFromDB.isPresent()) 
         {

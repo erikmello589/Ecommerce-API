@@ -1,7 +1,7 @@
 package com.erikm.ecommerce.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import java.time.Instant;
+import java.time.LocalDateTime;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ApiResponse<T> {
@@ -9,14 +9,14 @@ public class ApiResponse<T> {
     private T data;
     private String message;
     private ApiError error;
-    private Instant timestamp;
+    private LocalDateTime timestamp;
 
     public ApiResponse(boolean success, T data, String message, ApiError error) {
         this.success = success;
         this.data = data;
         this.message = message;
         this.error = error;
-        this.timestamp = Instant.now();
+        this.timestamp = LocalDateTime.now();
     }
 
     // Getters para todos os campos
@@ -36,7 +36,7 @@ public class ApiResponse<T> {
         return error;
     }
 
-    public Instant getTimestamp() {
+    public LocalDateTime getTimestamp() {
         return timestamp;
     }
 

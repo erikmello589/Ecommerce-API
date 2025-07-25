@@ -18,6 +18,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "tb_orders")
@@ -29,17 +34,24 @@ public class Order extends Timestamps
     @Column(name = "order_id")
     private Long orderId;
 
+    @NotNull(message = "O cliente do pedido é obrigatório.")
+    @Valid
     @ManyToOne 
     @JoinColumn(name = "customer_id", nullable = false)
     private Customer customer;
 
+    @NotNull(message = "O status do pedido é obrigatório.")
     @Enumerated(EnumType.STRING)
     @Column(name = "status", length = 20, nullable = false)
     private OrderStatus status;
 
+    @NotNull(message = "O valor total do pedido é obrigatório.")
+    @DecimalMin(value = "0.01", message = "O valor total do pedido deve ser maior que zero.")
     @Column(name = "total_amount", precision = 10, scale = 2, nullable = false)
     private BigDecimal totalAmount;
 
+    @NotBlank(message = "O endereço de entrega é obrigatório e não pode estar em branco.")
+    @Size(max = 500, message = "O endereço de entrega não pode exceder 500 caracteres.")
     @Column(name = "shipping_address", columnDefinition = "TEXT")
     private String shippingAddress;
 

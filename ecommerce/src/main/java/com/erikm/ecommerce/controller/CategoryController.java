@@ -18,6 +18,8 @@ import com.erikm.ecommerce.service.CategoryService;
 
 
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -32,7 +34,7 @@ public class CategoryController
 
     
     @PostMapping("/api/categories")
-    public ResponseEntity<ApiResponse<?>> newCategory(@RequestBody CategoryDTO categoryDTO) 
+    public ResponseEntity<ApiResponse<?>> newCategory(@Valid @RequestBody CategoryDTO categoryDTO) 
     {
         try 
         {
@@ -74,7 +76,7 @@ public class CategoryController
     }
 
     @PutMapping("/api/categories/{id}")
-    public ResponseEntity<ApiResponse<?>> editCategory(@PathVariable("id") Long categoryId, @RequestBody CategoryDTO categoryDTO)
+    public ResponseEntity<ApiResponse<?>> editCategory(@PathVariable("id") Long categoryId, @Valid @RequestBody CategoryDTO categoryDTO)
     {
         try 
         {

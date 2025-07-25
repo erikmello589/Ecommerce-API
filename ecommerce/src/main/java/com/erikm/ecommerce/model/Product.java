@@ -12,6 +12,12 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "tb_products") 
@@ -23,25 +29,38 @@ public class Product extends Timestamps
     @Column(name = "product_id")
     private Long productId;
 
+    @NotBlank(message = "O nome do produto é obrigatório e não pode estar em branco.")
+    @Size(min = 3, max = 100, message = "O nome do produto deve ter entre 3 e 100 caracteres.")
     @Column(name = "name", length = 255, nullable = false)
     private String name;
 
+    @Size(max = 500, message = "A descrição do produto não pode exceder 500 caracteres.")
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
+    @NotNull(message = "O preço do produto é obrigatório.")
+    @DecimalMin(value = "0.01", message = "O preço do produto deve ser maior que zero.")
     @Column(name = "price", precision = 10, scale = 2, nullable = false)
     private BigDecimal price;
 
+    @NotNull(message = "A quantidade em estoque é obrigatória.")
+    @Min(value = 0, message = "A quantidade em estoque não pode ser negativa.")
     @Column(name = "stock_quantity", nullable = false)
+    @Min(value=0)
     private Integer stockQuantity = 0;
 
+    @NotNull(message = "A categoria do produto é obrigatória.")
+    @Valid
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
+    @NotBlank(message = "O SKU do produto é obrigatório e não pode estar em branco.")
+    @Size(min = 3, max = 50, message = "O SKU deve ter entre 3 e 50 caracteres.")
     @Column(name = "sku", length = 50, unique = true, nullable = false)
     private String sku;
 
+    @NotNull(message = "O status de atividade do produto é obrigatório.")
     @Column(name = "is_active", nullable = false)
     private Boolean isActive = true;
 
