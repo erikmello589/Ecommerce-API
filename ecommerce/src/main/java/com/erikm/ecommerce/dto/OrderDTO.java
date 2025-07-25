@@ -1,5 +1,7 @@
 package com.erikm.ecommerce.dto;
 
-public record OrderDTO() {
+import java.util.List;
+
+public record OrderDTO(String customerEmail, String shippingAddress, List<OrderItemDTO> orderItens) {
 
 }

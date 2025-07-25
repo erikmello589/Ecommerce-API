@@ -62,7 +62,7 @@ public class Order extends Timestamps
     public Order() 
     {
         super();
-        this.status = OrderStatus.PENDING;
+        this.status = OrderStatus.CREATED;
     }
 
     public Long getOrderId() {

@@ -4,8 +4,6 @@ import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,13 +18,13 @@ import com.erikm.ecommerce.dto.ProductDTO;
 import com.erikm.ecommerce.model.Product;
 import com.erikm.ecommerce.service.ProductService;
 
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import org.springframework.web.bind.annotation.RequestBody;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 
 @RestController
-@Tag(name = "Categoria", description = "Endpoints para gerenciamento de categorias e suas informações.")
+@Tag(name = "Produtos", description = "Endpoints para gerenciamento de Produtos e suas informações.")
 public class ProductController 
 {
     private final ProductService productService;

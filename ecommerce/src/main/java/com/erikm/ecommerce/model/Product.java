@@ -46,7 +46,6 @@ public class Product extends Timestamps
     @NotNull(message = "A quantidade em estoque é obrigatória.")
     @Min(value = 0, message = "A quantidade em estoque não pode ser negativa.")
     @Column(name = "stock_quantity", nullable = false)
-    @Min(value=0)
     private Integer stockQuantity = 0;
 
     @NotNull(message = "A categoria do produto é obrigatória.")

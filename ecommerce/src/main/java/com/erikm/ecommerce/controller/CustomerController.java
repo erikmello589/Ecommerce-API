@@ -14,12 +14,12 @@ import com.erikm.ecommerce.dto.CustomerDTO;
 import com.erikm.ecommerce.model.Customer;
 import com.erikm.ecommerce.service.CustomerService;
 
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import org.springframework.web.bind.annotation.RequestBody;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 @RestController
-@Tag(name = "Categoria", description = "Endpoints para gerenciamento de categorias e suas informações.")
+@Tag(name = "Clientes", description = "Endpoints para gerenciamento de Clientes e suas informações.")
 public class CustomerController 
 {
 

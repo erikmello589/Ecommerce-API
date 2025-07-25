@@ -53,6 +53,7 @@ public class SecurityConfig {
             .requestMatchers(HttpMethod.GET,  "/api/customers/{id}").permitAll()
             .requestMatchers(HttpMethod.GET,  "/api/customers/email/{email}").permitAll()
             .requestMatchers(HttpMethod.PUT,  "/api/customers/{id}").permitAll()
+            .requestMatchers(HttpMethod.POST,  "/api/orders").permitAll()
             .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/swagger-ui.html").permitAll()
             .anyRequest().authenticated())
             .csrf(csrf -> csrf.disable())

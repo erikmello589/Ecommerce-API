@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.erikm.ecommerce.dto.ProductDTO;
+import com.erikm.ecommerce.model.Category;
 import com.erikm.ecommerce.model.Product;
 import com.erikm.ecommerce.repository.ProductRepository;
 
@@ -17,10 +18,13 @@ import com.erikm.ecommerce.repository.ProductRepository;
 public class ProductService 
 {
     private final ProductRepository productRepository;
+    private final CategoryService categoryService;
     private final ModelMapper modelMapper;
-
-    public ProductService(ProductRepository productRepository, ModelMapper modelMapper) {
+    
+    public ProductService(ProductRepository productRepository, CategoryService categoryService,
+            ModelMapper modelMapper) {
         this.productRepository = productRepository;
+        this.categoryService = categoryService;
         this.modelMapper = modelMapper;
     }
 
@@ -33,9 +37,15 @@ public class ProductService
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Produto já existente com o SKU: " + productDTO.sku());
         }
 
+        Category categoryFromDB = categoryService.findCategoryByName(productDTO.category());
+
         Product newProduct = new Product();
         newProduct.setName(productDTO.name());
         newProduct.setDescription(productDTO.description());
+        newProduct.setPrice(productDTO.price());
+        newProduct.setStockQuantity(productDTO.stockQuantity());
+        newProduct.setCategory(categoryFromDB);
+        newProduct.setSku(productDTO.sku());
         newProduct.setIsActive(productDTO.isActive());
 
         return productRepository.save(newProduct);
@@ -47,10 +57,17 @@ public class ProductService
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Produto não encontrado."));
     }
 
+    public Product findProductBySku(String productSku) 
+    {
+        return productRepository.findBySku(productSku)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Produto de SKU Nº:" + productSku + "não encontrado no sistema."));
+    }
+
     public Page<Product> findProductsByCategory(String categoryName, Pageable pageable) 
     {
         return productRepository.findByCategoryNameContainingIgnoreCase(categoryName, pageable);
     }
+
 
     public Product editProduct(Long productId, ProductDTO productDTO) 
     {

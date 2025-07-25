@@ -54,6 +54,12 @@ public class CategoryService
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Categoria não encontrada."));
     }
 
+    public Category findCategoryByName(String categoryName) 
+    {
+        return categoryRepository.findByName(categoryName)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Categoria não encontrada."));
+    }
+
     public Category editCategory(Long categoryId, CategoryDTO categoryDTO) 
     {
         Category categoryFromDB = categoryRepository.findById(categoryId)
