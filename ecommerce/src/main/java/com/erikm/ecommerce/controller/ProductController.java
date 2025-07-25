@@ -93,6 +93,14 @@ public class ProductController
         }
     }
 
+    @GetMapping("/api/products/category/{categoryId}")
+    public ResponseEntity<PageResponse<Product>> getProductByCategoryId(@PathVariable("categoryId") Long categoryId, @ParameterObject Pageable pageable)
+    {
+        Page<Product> call = productService.findProductsByCategory(categoryId, pageable);
+        PageResponse<Product> pageResponse = PageResponse.fromSpringPage(call);
+        return ResponseEntity.status(HttpStatus.OK).body(pageResponse);
+    }
+
     @PutMapping("/api/products/{id}")
     public ResponseEntity<ApiResponse<?>> editProduct(@PathVariable("id") Long productId, @RequestBody ProductDTO productDTO)
     {

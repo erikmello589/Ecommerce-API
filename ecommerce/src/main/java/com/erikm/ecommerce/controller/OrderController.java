@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,10 +16,15 @@ import com.erikm.ecommerce.dto.OrderDTO;
 import com.erikm.ecommerce.dto.Responses.ApiResponse;
 import com.erikm.ecommerce.dto.Responses.PageResponse;
 import com.erikm.ecommerce.model.Order;
+import com.erikm.ecommerce.model.Enums.OrderStatus;
 import com.erikm.ecommerce.service.OrderService;
 
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 
 @RestController
 @Tag(name = "Pedido", description = "Endpoints para gerenciamento de Pedidos e suas informações.")
@@ -77,6 +83,20 @@ public class OrderController
         catch (ResponseStatusException e) 
         {
             return ResponseEntity.status(e.getStatusCode()).body(ApiResponse.error(e.getStatusCode().toString(), e.getTypeMessageCode(), e.getReason()));
+        }
+    }
+
+    @PatchMapping("/api/orders/{id}/status")
+    public ResponseEntity<ApiResponse<?>> editStock(@PathVariable("id") Long orderId, @Valid @NotBlank @RequestParam String orderStatus) 
+    {
+        try 
+        {
+            OrderStatus call = orderService.editStatusOrder(orderId, orderStatus);
+            return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(call, "Status do Pedido alterado com sucesso."));
+        } 
+        catch (ResponseStatusException e) 
+        {
+            return ResponseEntity.status(e.getStatusCode()).body(ApiResponse.error(e.getTitleMessageCode(), e.getTypeMessageCode(), e.getReason()));
         }
     }
 }

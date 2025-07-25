@@ -104,25 +104,25 @@ public class ProductService
         return productRepository.save(productFromDB);
     }
 
-    // Método para buscar produtos por nome com paginação e ordenação
+    
     public Page<Product> findProductsByName(String name, Pageable pageable) 
     {
         return productRepository.findByNameContainingIgnoreCase(name, pageable);
     }
 
-    // Método para buscar produtos por categoria com paginação e ordenação
+    
     public Page<Product> findProductsByCategory(Long categoryId, Pageable pageable) 
     {
         return productRepository.findByCategoryCategoryId(categoryId, pageable);
     }
 
-    // Método para buscar produtos por faixa de preço com paginação e ordenação
+   
     public Page<Product> findProductsByPriceRange(BigDecimal minPrice, BigDecimal maxPrice, Pageable pageable) 
     {
         return productRepository.findByPriceBetween(minPrice, maxPrice, pageable);
     }
 
-    // Método para buscar produtos com múltiplos filtros (ex: nome e categoria)
+    
     public Page<Product> findProductsByNameAndCategory(String name, Long categoryId, Pageable pageable) 
     {
         return productRepository.findByNameContainingIgnoreCaseAndCategoryCategoryId(name, categoryId, pageable);
