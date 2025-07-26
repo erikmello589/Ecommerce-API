@@ -68,6 +68,18 @@ public class Product extends Timestamps
         super();
     }
 
+     // Construtor para testes, incluindo a categoria
+    public Product(String name, String description, BigDecimal price, Integer stockQuantity, Category category, String sku, Boolean isActive) {
+        super();
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.stockQuantity = stockQuantity;
+        this.category = category;
+        this.sku = sku;
+        this.isActive = isActive;
+    }
+
     public Long getProductId() {
         return productId;
     }

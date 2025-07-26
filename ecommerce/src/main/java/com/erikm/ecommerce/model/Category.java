@@ -72,5 +72,16 @@ public class Category extends Timestamps
     {
         super(); 
     }
+
+    public Category(
+            @NotBlank(message = "O nome da categoria é obrigatório e não pode estar em branco.") @Size(min = 3, max = 30, message = "O nome da categoria deve ter entre 3 e 30 caracteres.") String name,
+            @Size(max = 500, message = "A descrição da categoria não pode exceder 500 caracteres.") String description,
+            @NotNull(message = "O status de atividade da categoria não pode ser nulo.") Boolean isActive) {
+        this.name = name;
+        this.description = description;
+        this.isActive = isActive;
+    }
+
+    
     
 }

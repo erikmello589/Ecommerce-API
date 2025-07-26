@@ -59,6 +59,17 @@ public class Customer extends Timestamps
         super();
     }
 
+    // Construtor para testes
+    public Customer(String firstName, String lastName, String email, String phone, String document, Boolean isActive) {
+        super(); // Chama o construtor da classe pai Timestamps
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.phone = phone;
+        this.document = document;
+        this.isActive = isActive;
+    }
+
     public Long getCustomerId() {
         return customerId;
     }
@@ -114,6 +125,4 @@ public class Customer extends Timestamps
     public void setIsActive(Boolean isActive) {
         this.isActive = isActive;
     }
-
-    
 }
