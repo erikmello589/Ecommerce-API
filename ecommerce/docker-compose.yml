@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  
+  db:
+    image: postgres:13
+    restart: always
+    environment:
+      POSTGRES_DB: ecommerce_db       
+      POSTGRES_USER: ecommerce_user   
+      POSTGRES_PASSWORD: sua_senha_segura 
+    ports:
+      - "5432:5432" 
+    volumes:
+      - pgdata:/var/lib/postgresql/data s
+
+  
+  app:
+    build: . # Constrói a imagem Docker a partir do Dockerfile no diretório atual
+    restart: always
+    ports:
+      - "8080:8080" # Mapeia a porta 8080 do host para a porta 8080 do contêiner da aplicação
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/ecommerce_db
+      SPRING_DATASOURCE_USERNAME: ecommerce_user
+      SPRING_DATASOURCE_PASSWORD: sua_senha_segura
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update 
+      
+    depends_on:
+      - db
+
+volumes:
+  pgdata:

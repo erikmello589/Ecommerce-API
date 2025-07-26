@@ -1,0 +1,27 @@
+FROM maven:3.8.7-openjdk-17-slim AS build
+
+WORKDIR /app
+
+COPY pom.xml .
+
+# Baixa todas as dependências do projeto.
+# Isso garante que as dependências sejam baixadas apenas uma vez e cacheadas.
+RUN mvn dependency:go-offline
+
+# Copia o código fonte da aplicação para o diretório de trabalho.
+COPY src ./src
+
+RUN mvn clean install -DskipTests
+
+FROM openjdk:17-jre-slim
+
+
+WORKDIR /app
+
+
+EXPOSE 8080
+
+
+COPY --from=build /app/target/ecommerce-0.0.1-SNAPSHOT.jar /app/app.jar
+
+ENTRYPOINT ["java", "-jar", "app.jar"]
