@@ -41,10 +41,9 @@ public class CategoryService
         return categoryRepository.save(newCategory);
     }
 
-    public Page<Category> findAllCategories(Pageable pageable) 
+    public Page<Category> findAllCategories(Pageable pageable)
     {
         return categoryRepository.findByIsActiveTrue(pageable);
-
     }
 
     public Category findCategoryById(Long categoryId) 
