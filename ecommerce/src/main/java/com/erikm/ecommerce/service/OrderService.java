@@ -113,6 +113,11 @@ public class OrderService {
         Order order = orderRepository.findById(orderId)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Pedido não encontrado."));
 
+        if (order.getStatus() == OrderStatus.DELIVERED || order.getStatus() == OrderStatus.CANCELLED)
+        {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Pedido não pode ser modificado, graças ao status: " + order.getStatus());
+        }
+
         OrderStatus newStatus;
         try 
         {
@@ -126,6 +131,33 @@ public class OrderService {
         order.setStatus(newStatus);
         orderRepository.save(order);
         return newStatus;
+    }
+
+    
+    @Transactional
+    public Order deleteOrder(Long orderId)
+    {
+        Order order = orderRepository.findById(orderId)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Pedido não encontrado."));
+
+        List<OrderItem> orderItems = orderItemRepository.findAllByOrder(order);
+        if (order.getStatus() == OrderStatus.CONFIRMED || order.getStatus() == OrderStatus.CREATED) 
+        {
+            for (OrderItem item : orderItems) {
+                Product product = item.getProduct();
+                int returnedQuantity = item.getQuantity();
+                
+                //Devolver pro estoque
+                productService.editStock(product.getProductId(), product.getStockQuantity() + returnedQuantity);
+            }
+        } 
+        else if (order.getStatus() == OrderStatus.DELIVERED || order.getStatus() == OrderStatus.CANCELLED) 
+        {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Pedido não pode ser cancelado, graças ao status: " + order.getStatus());
+        } 
+
+        order.setStatus(OrderStatus.CANCELLED);
+        return orderRepository.save(order);
     }
 
     public Order findOrderById(Long orderId) {

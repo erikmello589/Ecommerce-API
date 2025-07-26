@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -64,6 +65,20 @@ public class OrderController
         {
             Order call = orderService.findOrderById(orderId);
             return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(call, "Pedido Listado com sucesso."));
+        } 
+        catch (ResponseStatusException e) 
+        {
+            return ResponseEntity.status(e.getStatusCode()).body(ApiResponse.error(e.getStatusCode().toString(), e.getTypeMessageCode(), e.getReason()));
+        }
+    }
+
+    @DeleteMapping("/api/orders/{id}")
+    public ResponseEntity<ApiResponse<?>> deleteOrderbyId(@PathVariable("id") Long orderId)
+    {
+        try 
+        {
+            Order call = orderService.deleteOrder(orderId);
+            return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(call, "Pedido cancelado com sucesso."));
         } 
         catch (ResponseStatusException e) 
         {

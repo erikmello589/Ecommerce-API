@@ -64,6 +64,7 @@ public class SecurityConfig {
             .requestMatchers(HttpMethod.GET,  "/api/orders").permitAll()
             .requestMatchers(HttpMethod.PATCH,  "/api/orders/{id}/status").permitAll()
             .requestMatchers(HttpMethod.GET,  "/api/orders/{id}").permitAll()
+            .requestMatchers(HttpMethod.DELETE,  "/api/orders/{id}").permitAll()
             .requestMatchers(HttpMethod.GET,  "/api/orders/customer/{customerId}").permitAll()
             .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/swagger-ui.html").permitAll()
             .anyRequest().authenticated())
