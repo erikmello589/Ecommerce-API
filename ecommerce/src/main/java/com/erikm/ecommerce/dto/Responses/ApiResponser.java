@@ -4,14 +4,14 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import java.time.LocalDateTime;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ApiResponse<T> {
+public class ApiResponser<T> {
     private boolean success;
     private T data;
     private String message;
     private ApiError error;
     private LocalDateTime timestamp;
 
-    public ApiResponse(boolean success, T data, String message, ApiError error) {
+    public ApiResponser(boolean success, T data, String message, ApiError error) {
         this.success = success;
         this.data = data;
         this.message = message;
@@ -41,19 +41,19 @@ public class ApiResponse<T> {
     }
 
     // Métodos estáticos de fábrica para facilitar a criação de respostas
-    public static <T> ApiResponse<T> success(T data, String message) {
-        return new ApiResponse<>(true, data, message, null);
+    public static <T> ApiResponser<T> success(T data, String message) {
+        return new ApiResponser<>(true, data, message, null);
     }
 
-    public static <T> ApiResponse<T> success(T data) {
-        return new ApiResponse<>(true, data, "Operação realizada com sucesso", null);
+    public static <T> ApiResponser<T> success(T data) {
+        return new ApiResponser<>(true, data, "Operação realizada com sucesso", null);
     }
 
-    public static ApiResponse<?> error(String code, String message, String details) {
-        return new ApiResponse<>(false, null, null, new ApiError(code, message, details));
+    public static ApiResponser<?> error(String code, String message, String details) {
+        return new ApiResponser<>(false, null, null, new ApiError(code, message, details));
     }
 
-    public static ApiResponse<?> error(String code, String message) {
-        return new ApiResponse<>(false, null, null, new ApiError(code, message, null));
+    public static ApiResponser<?> error(String code, String message) {
+        return new ApiResponser<>(false, null, null, new ApiError(code, message, null));
     }
 }

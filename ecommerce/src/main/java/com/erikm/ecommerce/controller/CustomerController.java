@@ -14,12 +14,18 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.erikm.ecommerce.dto.CustomerDTO;
-import com.erikm.ecommerce.dto.Responses.ApiResponse;
+import com.erikm.ecommerce.dto.Responses.ApiError;
+import com.erikm.ecommerce.dto.Responses.ApiResponser;
 import com.erikm.ecommerce.dto.Responses.PageResponse;
 import com.erikm.ecommerce.model.Customer;
 import com.erikm.ecommerce.service.CustomerService;
 
 import org.springframework.web.bind.annotation.RequestBody;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
@@ -33,20 +39,56 @@ public class CustomerController
         this.customerService = customerService;
     }
 
+    @Operation(
+        summary = "Criar um cliente.",
+        description = "Dadas as credenciais requisitadas, faça a criação de um cliente no sistema.\n Endpoint Público a todos os visitantes.",
+        responses = {
+            @ApiResponse(responseCode = "201", description = "Cliente criado com sucesso.", content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ApiResponser.class)
+            )),
+            @ApiResponse(responseCode = "409", description = "As credenciais informadas estão em conflito com dados já existentes no sistema.", content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ApiError.class)
+            )),
+            @ApiResponse(responseCode = "500", description = "Erro interno no servidor.", content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ApiResponser.class)
+            ))
+        }
+    )
     @PostMapping("/api/customers")
-    public ResponseEntity<ApiResponse<?>> newCustomer(@RequestBody CustomerDTO customerDTO) 
+    public ResponseEntity<ApiResponser<?>> newCustomer(@RequestBody CustomerDTO customerDTO) 
     {
         try 
         {
             Customer call = customerService.createNewCustomer(customerDTO);
-            return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(call, "Cliente criado com sucesso."));
+            return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponser.success(call, "Cliente criado com sucesso."));
         } 
         catch (ResponseStatusException e) 
         {
-            return ResponseEntity.status(e.getStatusCode()).body(ApiResponse.error(e.getStatusCode().toString(), e.getTypeMessageCode(), e.getReason()));
+            return ResponseEntity.status(e.getStatusCode()).body(ApiResponser.error(e.getStatusCode().toString(), e.getTypeMessageCode(), e.getReason()));
         }
     }
 
+    @Operation(
+        summary = "Listar Clientes.",
+        description = "Dadas as credenciais requisitadas, faça uma listagem de clientes registrados no sistema.\n Endpoint Público a todos os visitantes.",
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Listagem exibida com sucesso.", content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = PageResponse.class)
+            )),
+            @ApiResponse(responseCode = "404", description = "As credenciais informadas não foram encontradas no sistema.", content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ApiError.class)
+            )),
+            @ApiResponse(responseCode = "500", description = "Erro interno no servidor.", content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ApiResponser.class)
+            ))
+        }
+    )
     @GetMapping("/api/customers")
     public ResponseEntity<PageResponse<Customer>> getAllCustomers(@ParameterObject Pageable pageable) 
     {
@@ -55,55 +97,131 @@ public class CustomerController
         return ResponseEntity.status(HttpStatus.OK).body(pageResponse);
     }
 
+    @Operation(
+        summary = "Buscar um Cliente.",
+        description = "Dadas as credenciais requisitadas, faça a busca de um cliente registrado no sistema.\n Endpoint Público a todos os visitantes.",
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Cliente exibido com sucesso.", content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ApiResponser.class)
+            )),
+            @ApiResponse(responseCode = "404", description = "As credenciais informadas não foram encontradas no sistema.", content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ApiError.class)
+            )),
+            @ApiResponse(responseCode = "500", description = "Erro interno no servidor.", content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ApiResponser.class)
+            ))
+        }
+    )
     @GetMapping("/api/customers/{id}")
-    public ResponseEntity<ApiResponse<?>> getCustomerbyId(@PathVariable("id") Long customerId)
+    public ResponseEntity<ApiResponser<?>> getCustomerbyId(@PathVariable("id") Long customerId)
     {
         try 
         {
             Customer call = customerService.findCustomerById(customerId);
-            return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(call, "Cliente encontrado com sucesso."));
+            return ResponseEntity.status(HttpStatus.OK).body(ApiResponser.success(call, "Cliente encontrado com sucesso."));
         } 
         catch (ResponseStatusException e) {
-            return ResponseEntity.status(e.getStatusCode()).body(ApiResponse.error(e.getStatusCode().toString(), e.getTypeMessageCode(), e.getReason()));
+            return ResponseEntity.status(e.getStatusCode()).body(ApiResponser.error(e.getStatusCode().toString(), e.getTypeMessageCode(), e.getReason()));
         }
     }
 
+    @Operation(
+        summary = "Buscar um Cliente pelo e-mail.",
+        description = "Dadas as credenciais requisitadas, faça a busca de um cliente registrado no sistema.\n Endpoint Público a todos os visitantes.",
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Cliente exibido com sucesso.", content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ApiResponser.class)
+            )),
+            @ApiResponse(responseCode = "404", description = "As credenciais informadas não foram encontradas no sistema.", content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ApiError.class)
+            )),
+            @ApiResponse(responseCode = "500", description = "Erro interno no servidor.", content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ApiResponser.class)
+            ))
+        }
+    )
     @GetMapping("/api/customers/email/{email}")
-    public ResponseEntity<ApiResponse<?>> getCategory(@PathVariable("email") String customerEmail)
+    public ResponseEntity<ApiResponser<?>> getCategory(@PathVariable("email") String customerEmail)
     {
         try 
         {
             Customer call = customerService.findCustomerByEmail(customerEmail);
-            return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(call, "Cliente encontrado com sucesso."));
+            return ResponseEntity.status(HttpStatus.OK).body(ApiResponser.success(call, "Cliente encontrado com sucesso."));
         } 
         catch (ResponseStatusException e) {
-            return ResponseEntity.status(e.getStatusCode()).body(ApiResponse.error(e.getStatusCode().toString(), e.getTypeMessageCode(), e.getReason()));
+            return ResponseEntity.status(e.getStatusCode()).body(ApiResponser.error(e.getStatusCode().toString(), e.getTypeMessageCode(), e.getReason()));
         }
     }
 
+    @Operation(
+        summary = "Editar um Cliente.",
+        description = "Dadas as credenciais requisitadas, faça a edição de um cliente registrado no sistema.\n Endpoint Público a todos os visitantes.",
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Cliente editado com sucesso.", content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ApiResponser.class)
+            )),
+            @ApiResponse(responseCode = "404", description = "As credenciais informadas não foram encontradas no sistema.", content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ApiError.class)
+            )),
+            @ApiResponse(responseCode = "409", description = "As credenciais informadas estão em conflito com dados já existentes no sistema.", content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ApiError.class)
+            )),
+            @ApiResponse(responseCode = "500", description = "Erro interno no servidor.", content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ApiResponser.class)
+            ))
+        }
+    )
     @PutMapping("/api/customers/{id}")
-    public ResponseEntity<ApiResponse<?>> editCustomer(@PathVariable("id") Long customerId, @RequestBody CustomerDTO customerDTO)
+    public ResponseEntity<ApiResponser<?>> editCustomer(@PathVariable("id") Long customerId, @RequestBody CustomerDTO customerDTO)
     {
         try 
         {
             Customer call = customerService.editCustomer(customerId, customerDTO);
-            return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(call, "Cliente editado com sucesso."));
+            return ResponseEntity.status(HttpStatus.OK).body(ApiResponser.success(call, "Cliente editado com sucesso."));
         } 
         catch (ResponseStatusException e) {
-            return ResponseEntity.status(e.getStatusCode()).body(ApiResponse.error(e.getStatusCode().toString(), e.getTypeMessageCode(), e.getReason()));
+            return ResponseEntity.status(e.getStatusCode()).body(ApiResponser.error(e.getStatusCode().toString(), e.getTypeMessageCode(), e.getReason()));
         }
     }
 
+    @Operation(
+        summary = "Deletar um Cliente.",
+        description = "Dadas as credenciais requisitadas, faça a deleção de um cliente registrado no sistema.\n Endpoint Público a todos os visitantes.",
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Cliente deletado com sucesso.", content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ApiResponser.class)
+            )),
+            @ApiResponse(responseCode = "404", description = "As credenciais informadas não foram encontradas no sistema.", content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ApiError.class)
+            )),
+            @ApiResponse(responseCode = "500", description = "Erro interno no servidor.", content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ApiResponser.class)
+            ))
+        }
+    )
     @DeleteMapping("/api/customers/{id}")
-    public ResponseEntity<ApiResponse<?>> deleteCustomer(@PathVariable("id") Long customerId)
+    public ResponseEntity<ApiResponser<?>> deleteCustomer(@PathVariable("id") Long customerId)
     {
         try 
         {
             Customer call = customerService.deleteCustomer(customerId);
-            return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success(call, "Cliente deletado com sucesso."));
+            return ResponseEntity.status(HttpStatus.OK).body(ApiResponser.success(call, "Cliente deletado com sucesso."));
         } 
         catch (ResponseStatusException e) {
-            return ResponseEntity.status(e.getStatusCode()).body(ApiResponse.error(e.getStatusCode().toString(), e.getTypeMessageCode(), e.getReason()));
+            return ResponseEntity.status(e.getStatusCode()).body(ApiResponser.error(e.getStatusCode().toString(), e.getTypeMessageCode(), e.getReason()));
         }
     }
 }
