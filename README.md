@@ -99,3 +99,60 @@ O projeto foi desenvolvido com as seguintes dependências principais:
 ## 🎨 Autor
 
 * [Erik Mello Guedes](https://github.com/erikmello589)
+
+# Manual de Configuração Local do Projeto Spring Boot
+
+Este manual irá guiá-lo através dos passos necessários para configurar e rodar o projeto Spring Boot localmente em sua máquina.
+
+## 📑 Índice
+
+* [Pré-requisitos](#pré-requisitos)
+
+* [Clonando o Repositório](#clonando-o-repositório)
+
+* [Gerando as Chaves `.pem` (Privada e Pública)](#gerando-as-chaves-pem-privada-e-pública)
+
+* [Configurando o Banco de Dados (PostgreSQL)](#configurando-o-banco-de-dados-postgresql)
+
+* [Configurando o `application.properties` ou `application.yml`](#configurando-o-applicationproperties-ou-applicationyml)
+
+* [Construindo e Rodando o Projeto](#construindo-e-rodando-o-projeto)
+
+* [Verificação](#verificação)
+
+## Pré-requisitos
+
+Antes de começar, certifique-se de ter as seguintes ferramentas instaladas em sua máquina:
+
+* **Java Development Kit (JDK) 17 ou superior**: Você pode baixar a versão mais recente do OpenJDK ou da Oracle.
+
+  * [Download OpenJDK](https://openjdk.org/install/)
+
+* **Apache Maven** (se o projeto usa Maven) ou **Gradle** (se o projeto usa Gradle):
+
+  * [Download Maven](https://maven.apache.org/download.cgi)
+
+  * [Download Gradle](https://gradle.org/install/)
+
+* **Git**: Para clonar o repositório.
+
+  * [Download Git](https://git-scm.com/downloads)
+
+* **PostgreSQL**: O banco de dados utilizado pelo projeto.
+
+  * [Download PostgreSQL](https://www.postgresql.org/download/)
+
+* **OpenSSL**: Ferramenta para gerar as chaves criptográficas. Geralmente já vem pré-instalado em sistemas Linux/macOS. Para Windows, você pode instalá-lo via Chocolatey (`choco install openssl`) ou baixar um instalador.
+
+  * [Download OpenSSL (para Windows, procure por "Light" ou "Win64OpenSSL")](https://wiki.openssl.org/index.php/Binaries)
+
+## Clonando o Repositório
+
+1. Abra seu terminal ou prompt de comando.
+
+2. Navegue até o diretório onde deseja clonar o projeto.
+
+3. Clone o repositório do GitHub usando o seguinte comando:
+
+   ```bash
+   git clone <URL_DO_SEU_REPOSITORIO_GITHUB>
