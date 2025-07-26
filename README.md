@@ -56,7 +56,7 @@ O Banco de Dados possui como principais tabelas:
 
 * **Order-Items**: Detalhes dos itens dentro de cada pedido.
 
-(https://github.com/user-attachments/assets/1f2eddcb-31e3-4453-94cb-ee09aa4d68fd)
+<img width="1388" height="927" alt="Untitled" src="https://github.com/user-attachments/assets/1b463db5-6999-4462-8947-2ef565c1ea8e" />
 
 ## 💪 Dependências Principais
 
