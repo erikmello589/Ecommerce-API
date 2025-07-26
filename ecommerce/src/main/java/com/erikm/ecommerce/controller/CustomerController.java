@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,6 +27,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
@@ -57,8 +59,9 @@ public class CustomerController
             ))
         }
     )
+    @SecurityRequirement(name = "Auth JWT")
     @PostMapping("/api/customers")
-    public ResponseEntity<ApiResponser<?>> newCustomer(@RequestBody CustomerDTO customerDTO) 
+    public ResponseEntity<ApiResponser<?>> newCustomer(@RequestBody CustomerDTO customerDTO, JwtAuthenticationToken token) 
     {
         try 
         {
@@ -89,6 +92,7 @@ public class CustomerController
             ))
         }
     )
+    @SecurityRequirement(name = "Auth JWT")
     @GetMapping("/api/customers")
     public ResponseEntity<PageResponse<Customer>> getAllCustomers(@ParameterObject Pageable pageable) 
     {
@@ -115,6 +119,7 @@ public class CustomerController
             ))
         }
     )
+    @SecurityRequirement(name = "Auth JWT")
     @GetMapping("/api/customers/{id}")
     public ResponseEntity<ApiResponser<?>> getCustomerbyId(@PathVariable("id") Long customerId)
     {
@@ -146,6 +151,7 @@ public class CustomerController
             ))
         }
     )
+    @SecurityRequirement(name = "Auth JWT")
     @GetMapping("/api/customers/email/{email}")
     public ResponseEntity<ApiResponser<?>> getCategory(@PathVariable("email") String customerEmail)
     {
@@ -181,6 +187,7 @@ public class CustomerController
             ))
         }
     )
+    @SecurityRequirement(name = "Auth JWT")
     @PutMapping("/api/customers/{id}")
     public ResponseEntity<ApiResponser<?>> editCustomer(@PathVariable("id") Long customerId, @RequestBody CustomerDTO customerDTO)
     {
@@ -212,6 +219,7 @@ public class CustomerController
             ))
         }
     )
+    @SecurityRequirement(name = "Auth JWT")
     @DeleteMapping("/api/customers/{id}")
     public ResponseEntity<ApiResponser<?>> deleteCustomer(@PathVariable("id") Long customerId)
     {

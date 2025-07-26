@@ -18,6 +18,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import org.springframework.web.bind.annotation.*;
@@ -51,6 +52,7 @@ public class CategoryController
         }
     )
     @PostMapping("/api/categories")
+    @SecurityRequirement(name = "Auth JWT")
     public ResponseEntity<ApiResponser<?>> newCategory(@RequestBody CategoryDTO categoryDTO) 
     {
         try 
@@ -139,6 +141,7 @@ public class CategoryController
             ))
         }
     )
+    @SecurityRequirement(name = "Auth JWT")
     @PutMapping("/api/categories/{id}")
     public ResponseEntity<ApiResponser<?>> editCategory(@PathVariable("id") Long categoryId, @RequestBody CategoryDTO categoryDTO)
     {
@@ -170,6 +173,7 @@ public class CategoryController
             ))
         }
     )
+    @SecurityRequirement(name = "Auth JWT")
     @DeleteMapping("/api/categories/{id}")
     public ResponseEntity<ApiResponser<?>> deleteCategory(@PathVariable("id") Long categoryId)
     {

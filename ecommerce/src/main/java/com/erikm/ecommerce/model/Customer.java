@@ -1,12 +1,22 @@
 package com.erikm.ecommerce.model;
 
+import java.util.Set;
+
+import org.springframework.security.crypto.password.PasswordEncoder;
+
+import com.erikm.ecommerce.dto.Responses.LoginRequest;
 import com.erikm.ecommerce.model.Utils.Timestamps;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -46,6 +56,16 @@ public class Customer extends Timestamps
     @Column(name = "phone", length = 20)
     private String phone;
 
+    private String password;
+
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinTable(
+        name = "tb_customers_roles",
+        joinColumns = @JoinColumn(name = "customer_id"),
+        inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private Set<Role> roles;
+
     @Size(min = 11, max = 20, message = "O documento deve ter entre 11 e 20 caracteres.") 
     @Column(name = "document", length = 20, unique = true)
     private String document;
@@ -59,9 +79,8 @@ public class Customer extends Timestamps
         super();
     }
 
-    // Construtor para testes
     public Customer(String firstName, String lastName, String email, String phone, String document, Boolean isActive) {
-        super(); // Chama o construtor da classe pai Timestamps
+        super(); 
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
@@ -124,5 +143,27 @@ public class Customer extends Timestamps
 
     public void setIsActive(Boolean isActive) {
         this.isActive = isActive;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
+    }
+
+    public boolean isLoginCorrect(LoginRequest loginRequest, PasswordEncoder passwordEncoder) {
+       
+        return passwordEncoder.matches(loginRequest.password(), this.password);
+       
     }
 }

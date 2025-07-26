@@ -29,6 +29,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
@@ -59,6 +60,7 @@ public class ProductController
             ))
         }
     )
+    @SecurityRequirement(name = "Auth JWT")
     @PostMapping("/api/products")
     public ResponseEntity<ApiResponser<?>> newProduct(@RequestBody ProductDTO productDTO) 
     {
@@ -169,6 +171,7 @@ public class ProductController
             ))
         }
     )
+    @SecurityRequirement(name = "Auth JWT")
     @GetMapping("/api/products/category/{categoryId}")
     public ResponseEntity<PageResponse<Product>> getProductByCategoryId(@PathVariable("categoryId") Long categoryId, @ParameterObject Pageable pageable)
     {
@@ -199,6 +202,7 @@ public class ProductController
             ))
         }
     )
+    @SecurityRequirement(name = "Auth JWT")
     @PutMapping("/api/products/{id}")
     public ResponseEntity<ApiResponser<?>> editProduct(@PathVariable("id") Long productId, @RequestBody ProductDTO productDTO)
     {
@@ -230,6 +234,7 @@ public class ProductController
             ))
         }
     )
+    @SecurityRequirement(name = "Auth JWT")
     @DeleteMapping("/api/products/{id}")
     public ResponseEntity<ApiResponser<?>> deleteProduct(@PathVariable("id") Long productId)
     {
@@ -265,6 +270,7 @@ public class ProductController
             ))
         }
     )
+    @SecurityRequirement(name = "Auth JWT")
     @PatchMapping("/api/products/{id}/stock")
     public ResponseEntity<ApiResponser<?>> editStock(@PathVariable("id") Long productId, @RequestParam Integer stockQuantity) 
     {

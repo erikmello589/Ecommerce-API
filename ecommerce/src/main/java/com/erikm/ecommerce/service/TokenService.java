@@ -10,61 +10,60 @@ import org.springframework.stereotype.Service;
 
 import com.erikm.ecommerce.dto.Responses.LoginRequest;
 import com.erikm.ecommerce.dto.Responses.LoginResponse;
+import com.erikm.ecommerce.model.Customer;
 import com.erikm.ecommerce.model.Role;
-import com.erikm.ecommerce.model.User;
-import com.erikm.ecommerce.repository.UserRepository;
+import com.erikm.ecommerce.repository.CustomerRepository;
+
 
 import java.time.Instant;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
 public class TokenService {
 
     private final JwtEncoder jwtEncoder;
-    private final UserRepository userRepository;
+    private final CustomerRepository customerRepository;
     private final BCryptPasswordEncoder passwordEncoder;
 
-    public TokenService(JwtEncoder jwtEncoder, UserRepository userRepository, BCryptPasswordEncoder passwordEncoder) {
+    public TokenService(JwtEncoder jwtEncoder, CustomerRepository customerRepository,
+            BCryptPasswordEncoder passwordEncoder) {
         this.jwtEncoder = jwtEncoder;
-        this.userRepository = userRepository;
+        this.customerRepository = customerRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
     public LoginResponse authenticate(LoginRequest loginRequest) 
     {
-        Optional<User> user = loginRequest.usernameOrEmail().contains("@")
-                ? userRepository.findByEmail(loginRequest.usernameOrEmail())
-                : userRepository.findByUsername(loginRequest.usernameOrEmail());
+        Optional<Customer> customer = customerRepository.findByEmailAndIsActiveTrue(loginRequest.email());
 
-        if (user.isEmpty() || !user.get().isLoginCorrect(loginRequest, passwordEncoder)) {
-            throw new BadCredentialsException("Usuário ou senha inválida");
+        if (customer.isEmpty() || !customer.get().isLoginCorrect(loginRequest, passwordEncoder)) {
+            throw new BadCredentialsException("email ou senha inválida");
         }
 
-        return generateTokens(user.get());
+        return generateTokens(customer.get());
     }
 
     public LoginResponse refreshToken(JwtAuthenticationToken refreshToken) {
-        User user = userRepository.findById(UUID.fromString(refreshToken.getName()))
+        Customer customer = customerRepository.findById(Long.valueOf(refreshToken.getName()))
                 .orElseThrow(() -> new BadCredentialsException("Usuário não encontrado"));
 
-        return generateTokens(user);
+        return generateTokens(customer);
     }
 
-    private LoginResponse generateTokens(User user) {
+    private LoginResponse generateTokens(Customer customer) {
         var now = Instant.now();
         var accessTokenExpiresIn = 900L; // 15 minutos
 
         // Gerar Access Token (contém apenas informações mínimas)
-        String accessTokenScopes = user.getRoles()
+        String accessTokenScopes = customer.getRoles()
                 .stream()
                 .map(Role::getName)
                 .collect(Collectors.joining(" "));
 
         JwtClaimsSet accessTokenClaims = JwtClaimsSet.builder()
                 .issuer("mybackend")
-                .subject(user.getUserID().toString())
+                .subject(customer.getCustomerId().toString())
                 .issuedAt(now)
                 .expiresAt(now.plusSeconds(accessTokenExpiresIn))
                 .claim("scope", accessTokenScopes)
@@ -76,7 +75,7 @@ public class TokenService {
         var refreshTokenExpiresIn = 1296000L; // 15 dias
         JwtClaimsSet refreshTokenClaims = JwtClaimsSet.builder()
                 .issuer("mybackend")
-                .subject(user.getUserID().toString())
+                .subject(customer.getCustomerId().toString())
                 .issuedAt(now)
                 .expiresAt(now.plusSeconds(refreshTokenExpiresIn))
                 .build();

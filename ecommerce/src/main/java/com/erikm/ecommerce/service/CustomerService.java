@@ -1,17 +1,22 @@
 package com.erikm.ecommerce.service;
 
 import java.util.Optional;
+import java.util.Set;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.erikm.ecommerce.dto.CustomerDTO;
 import com.erikm.ecommerce.model.Customer;
+import com.erikm.ecommerce.model.Role;
 import com.erikm.ecommerce.repository.CustomerRepository;
+import com.erikm.ecommerce.repository.RoleRepository;
 
 @Service
 public class CustomerService 
@@ -19,14 +24,25 @@ public class CustomerService
 
     private final CustomerRepository customerRepository;
     private final ModelMapper modelMapper;
+    private final RoleRepository roleRepository;
+    private final BCryptPasswordEncoder passwordEncoder;
 
-    public CustomerService(CustomerRepository customerRepository, ModelMapper modelMapper) {
+    public CustomerService(CustomerRepository customerRepository, ModelMapper modelMapper,
+            RoleRepository roleRepository, BCryptPasswordEncoder passwordEncoder) {
         this.customerRepository = customerRepository;
         this.modelMapper = modelMapper;
+        this.roleRepository = roleRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
+    @Transactional
     public Customer createNewCustomer(CustomerDTO customerDTO) 
     {
+        var basicRole = roleRepository.findByName(Role.Values.BASIC.name());
+        if (basicRole == null) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Role básica não encontrada");
+        }
+
         Optional<Customer> customerFromDB = customerRepository.findByDocumentAndIsActiveTrue(customerDTO.document());
         Optional<Customer> userFromEmailDB = customerRepository.findByEmailAndIsActiveTrue(customerDTO.email());
 
@@ -46,6 +62,8 @@ public class CustomerService
         newCustomer.setEmail(customerDTO.email());
         newCustomer.setPhone(customerDTO.phone());
         newCustomer.setDocument(customerDTO.document());
+        newCustomer.setPassword(passwordEncoder.encode(customerDTO.password()));
+        newCustomer.setRoles(Set.of(basicRole));
 
         return customerRepository.save(newCustomer);
     }
